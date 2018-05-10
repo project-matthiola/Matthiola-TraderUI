@@ -1,4 +1,8 @@
-# trader_ui
+# Trader_UI
+
+[![Build Status](https://travis-ci.com/ljw9609/TraderUI.svg?token=rZsycNAAqukSyU9AujYH&branch=master)](https://travis-ci.com/ljw9609/TraderUI)
+![npm](https://img.shields.io/badge/npm-v5.6.0-blue.svg)
+![license](https://img.shields.io/badge/license-GPL-yellow.svg)
 
 The UI for the Trader of *Electronic Commodities Trading System*, instructed by *Morgan Stanley*.
 
