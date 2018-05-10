@@ -5,9 +5,12 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 import axios from 'axios'
 
 Vue.config.productionTip = false
+
+Vue.component(CollapseTransition.name, CollapseTransition)
 
 Vue.use(ElementUI)
 

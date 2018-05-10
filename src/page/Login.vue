@@ -3,7 +3,7 @@
     <transition class="form-fade" mode="in-out">
       <section class="form_container" v-show="showLogin">
         <div class="manage_tip">
-          <p>iCampus 登录</p>
+          <p>CTS 登录</p>
         </div>
         <el-form :model="loginForm" :rules="rules" ref="loginForm">
           <el-form-item label="用户名" prop="username">
@@ -15,6 +15,7 @@
           <el-form-item>
             <el-button type="primary" @click="submitForm('loginForm')">登录</el-button>
             <el-button @click="resetForm('loginForm')">重置</el-button>
+            <el-button type="success" @click="gotoRegister">注册</el-button>
           </el-form-item>
         </el-form>
       </section>
@@ -92,6 +93,9 @@ export default {
     },
     resetForm (formName) {
       this.$refs[formName].resetFields();
+    },
+    gotoRegister () {
+      this.$router.push('/register');
     }
   }
 }
