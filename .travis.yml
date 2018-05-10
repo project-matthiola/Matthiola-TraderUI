@@ -1,9 +1,7 @@
 language: node_js
 node_js:
 - '9'
-cache:
-  bundler: true
-  directories:
-  - node_modules
-script: 
+install:
+  - npm install
+script:
   - npm run build
