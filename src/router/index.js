@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Login from '@/page/Login'
 import Register from '@/page/Register'
 import HelloWorld from '@/components/HelloWorld'
+import TestWebSocket from '@/page/TestWebSocket'
 
 Vue.use(Router);
 
@@ -24,6 +25,11 @@ let routes = [
       requireAuth: true
     },
     component: HelloWorld
+  },
+  {
+    path: '/testWs',
+    name: 'testWs',
+    component: TestWebSocket
   }
 ];
 
