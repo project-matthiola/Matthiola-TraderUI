@@ -4,6 +4,7 @@ import Login from '@/page/Login'
 import Register from '@/page/Register'
 import HelloWorld from '@/components/HelloWorld'
 import TestWebSocket from '@/page/TestWebSocket'
+import Market from '@/page/Market'
 
 Vue.use(Router);
 
@@ -30,6 +31,11 @@ let routes = [
     path: '/testWs',
     name: 'testWs',
     component: TestWebSocket
+  },
+  {
+    path: '/market',
+    name: 'market',
+    component: Market
   }
 ];
 

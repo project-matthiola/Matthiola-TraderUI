@@ -7,6 +7,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 import axios from 'axios'
+import store from './store'
 
 Vue.config.productionTip = false
 
@@ -52,6 +53,7 @@ axios.interceptors.response.use(
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

@@ -1,0 +1,48 @@
+<template>
+  <el-row>
+    <el-col :span="12">
+      <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="Collapse">
+        <el-menu-item index="1">
+          <i class="el-icon-goods"></i>
+          <span slot="title">期货目录</span>
+        </el-menu-item>
+        <el-menu-item index="2">
+          <i class="el-icon-document"></i>
+          <span slot="title">我的订单</span>
+        </el-menu-item>
+      </el-menu>
+    </el-col>
+  </el-row>
+</template>
+
+<script>
+export default {
+  name: 'NavMenu',
+  data () {
+    return {
+      isCollapse: false
+    }
+  },
+  computed: {
+    Collapse () {
+      return this.$store.state.isCollapse;
+    }
+  },
+  methods: {
+    handleOpen (key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleClose (key, keyPath) {
+      console.log(key, keyPath);
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 200px;
+    min-height: 400px;
+    text-align: center;
+  }
+</style>
