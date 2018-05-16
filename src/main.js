@@ -8,12 +8,15 @@ import 'element-ui/lib/theme-chalk/index.css'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 import axios from 'axios'
 import store from './store'
+import './style/common.less'
+import Common from './common/common'
 
 Vue.config.productionTip = false
 
 Vue.component(CollapseTransition.name, CollapseTransition)
 
 Vue.use(ElementUI)
+Vue.use(Common)
 
 // http request interceptor
 axios.interceptors.request.use(

@@ -5,6 +5,7 @@ import Register from '@/page/Register'
 import HelloWorld from '@/components/HelloWorld'
 import TestWebSocket from '@/page/TestWebSocket'
 import Market from '@/page/Market'
+import Catalog from '@/page/Catalog'
 
 Vue.use(Router);
 
@@ -12,11 +13,17 @@ let routes = [
   {
     path: '/login',
     name: 'login',
+    meta: {
+      index: 0
+    },
     component: Login
   },
   {
     path: '/register',
     name: 'register',
+    meta: {
+      index: 0
+    },
     component: Register
   },
   {
@@ -35,7 +42,18 @@ let routes = [
   {
     path: '/market',
     name: 'market',
+    meta: {
+      index: 3
+    },
     component: Market
+  },
+  {
+    path: '/catalog',
+    name: 'catalog',
+    meta: {
+      index: 2
+    },
+    component: Catalog
   }
 ];
 

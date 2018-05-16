@@ -1,12 +1,13 @@
 <template>
   <el-row>
     <el-col :span="12">
-      <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="Collapse">
-        <el-menu-item index="1">
+      <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen"
+               @close="handleClose" :collapse="Collapse" v-bind:router="true">
+        <el-menu-item index="/catalog">
           <i class="el-icon-goods"></i>
           <span slot="title">期货目录</span>
         </el-menu-item>
-        <el-menu-item index="2">
+        <el-menu-item index="/myOrder">
           <i class="el-icon-document"></i>
           <span slot="title">我的订单</span>
         </el-menu-item>

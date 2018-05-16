@@ -1,6 +1,6 @@
 # Matthiola-Trader_UI
 
-[![Build Status](https://travis-ci.com/ljw9609/TraderUI.svg?token=rZsycNAAqukSyU9AujYH&branch=master)](https://travis-ci.com/ljw9609/TraderUI)
+[![Build Status](https://travis-ci.com/ljw9609/Matthiola-TraderUI.svg?token=rZsycNAAqukSyU9AujYH&branch=master)](https://travis-ci.com/ljw9609/Matthiola-TraderUI)
 ![npm](https://img.shields.io/badge/npm-v5.6.0-blue.svg)
 ![license](https://img.shields.io/badge/license-GPL-yellow.svg)
 

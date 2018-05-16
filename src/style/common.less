@@ -13,35 +13,35 @@ body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, l
     }
 }
 
-/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/  
-::-webkit-scrollbar  
-{  
-    width: 0px;  
-    height: 0px;  
-    background-color: #F5F5F5;  
-}  
-  
-/*定义滚动条轨道 内阴影+圆角*/  
-::-webkit-scrollbar-track  
-{  
-    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0);  
-    border-radius: 10px;  
-    background-color: #F5F5F5;  
-}  
-  
-/*定义滑块 内阴影+圆角*/  
-::-webkit-scrollbar-thumb  
-{  
-    border-radius: 10px;  
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);  
-    background-color: #555;  
-}  
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar
+{
+    width: 0px;
+    height: 0px;
+    background-color: #F5F5F5;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
 
 input[type="button"], input[type="submit"], input[type="search"], input[type="reset"] {
     -webkit-appearance: none;
 }
 
-textarea { -webkit-appearance: none;}   
+textarea { -webkit-appearance: none;}
 
 html,body{
     height: 100%;
@@ -92,4 +92,43 @@ html,body{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.header {
+  height: 60px;
+  background-color: white;
+  top: 0;
+  left: 0;
+  width: 100%;
+  line-height: 80px;
+  z-index: 100;
+  position: fixed;
+}
+
+.aside {
+  width: 220px !important;
+  padding-top: 65px !important;
+  position: fixed !important;
+}
+
+.main-notCollapse {
+  padding-top: 70px !important;
+  padding-left: 80px !important;
+  padding-bottom: 70px !important;
+}
+
+.main-collapse {
+  padding-top: 70px !important;
+  padding-left: 230px !important;
+  padding-bottom: 70px !important;
+}
+
+.footer {
+  z-index: 100;
+  //position: fixed !important;
+  //bottom: 0;
+  margin-top: -60px;
+  height: 60px;
+  width: 100%;
+  background-color: white;
 }
