@@ -4,10 +4,21 @@
      <h1>发送期货ID：{{futureID}}</h1>
      <h1>收到信息：{{ res }}</h1>
      <el-button type="primary" plain @click="gotoLogin">登录</el-button>
+     <div id="chartdiv" style="width: 50%; height: 400px;"></div>
    </div>
 </template>
 
 <script>
+import Highcharts from 'highcharts/highstock'
+import HighchartsMore from 'highcharts/highcharts-more'
+import HighchartsDrilldown from 'highcharts/modules/drilldown'
+import Highcharts3D from 'highcharts/highcharts-3d';
+import Highmaps from 'highcharts/modules/map';
+
+HighchartsMore(Highcharts);
+HighchartsDrilldown(Highcharts);
+Highcharts3D(Highcharts);
+Highmaps(Highcharts);
 export default {
   name: 'TestWebSocket',
   data () {
@@ -24,8 +35,35 @@ export default {
   },
   mounted () {
     this.runWs();
+    this.drawChart();
   },
   methods: {
+    drawChart () {
+      let options = {
+        chart: {
+          type: 'bar'
+        },
+        title: {
+          text: '我的第一个图表'
+        },
+        xAxis: {
+          categories: ['苹果', '香蕉', '橙子']
+        },
+        yAxis: {
+          title: {
+            text: '吃水果个数'
+          }
+        },
+        series: [{
+          name: '小明',
+          data: [1, 0, 4]
+        }, {
+          name: '小红',
+          data: [5, 7, 3]
+        }]
+      };
+      let chart = Highcharts.chart('chartdiv', options);
+    },
     initWs () {
       if ('WebSocket' in window) {
         this.ws = new WebSocket('ws://localhost:8080/websocket')

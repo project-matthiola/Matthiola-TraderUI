@@ -5,7 +5,7 @@
         <el-menu :default-active="activeIndex" class="el-menu" mode="horizontal" @select="handleSelect">
           <el-menu-item index="1"><i class="el-icon-menu"></i></el-menu-item>
           <el-submenu index="2">
-            <template slot="title">John Doe</template>
+            <template slot="title">{{username}}</template>
             <el-menu-item index="2-1"><i class="el-icon-setting"></i>设置</el-menu-item>
             <el-menu-item index="2-2"><i class="el-icon-circle-close-outline"></i>登出</el-menu-item>
           </el-submenu>
@@ -15,7 +15,7 @@
       <el-col :span="1" style="height: 60px">
         <img src="@/assets/icon.jpg" style="width: 90%; height: 80%; padding-top: 10px" />
       </el-col>
-      <el-col :span="4" style="font-size: x-large; text-align: left; height: 60px">
+      <el-col :span="4" style="font-size: larger; text-align: left; height: 60px">
         <p>Matthiola-Trader</p>
       </el-col>
     </el-col>
@@ -27,8 +27,12 @@ export default {
   name: 'Header',
   data () {
     return {
-      activeIndex: '1'
+      activeIndex: '1',
+      username: ''
     }
+  },
+  mounted () {
+    this.username = sessionStorage.getItem('username');
   },
   methods: {
     handleSelect (key, keyPath) {
@@ -37,6 +41,10 @@ export default {
         this.triggerCollapse();
       } else {
         this.$store.state.isCollapse = true;
+        if (key === '2-2') {
+          sessionStorage.clear();
+          this.$router.push('/login');
+        }
       }
     },
     handleOpen (key, keyPath) {

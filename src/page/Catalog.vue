@@ -42,7 +42,7 @@
           </el-main>
         </el-container>
       </el-container>
-      <el-footer class="footer">
+      <el-footer class="footer2">
         <Footer></Footer>
       </el-footer>
     </el-container>
@@ -63,6 +63,9 @@ export default {
     return {
       futures: []
     }
+  },
+  created () {
+    document.title = '期货目录'
   },
   mounted () {
     let requestFuturesListParams = {};
