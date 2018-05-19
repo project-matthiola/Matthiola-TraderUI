@@ -3,21 +3,21 @@
     <transition class="form-fade" mode="in-out">
       <section class="form_container" v-show="showRegister">
         <div class="manage_tip">
-          <p>CTS 注册</p>
+          <p>Register</p>
         </div>
         <el-form :model="registerForm" status-icon :rules="rules" ref="registerForm">
-          <el-form-item label="用户名" prop="username">
+          <el-form-item label="Username" prop="username">
             <el-input type="text" v-model="registerForm.username" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
+          <el-form-item label="Password" prop="password">
             <el-input type="password" v-model="registerForm.password" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="确认密码" prop="checkPassword">
+          <el-form-item label="Confirm Password" prop="checkPassword">
             <el-input type="password" v-model="registerForm.checkPassword" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('registerForm')">注册</el-button>
-            <el-button @click="resetForm('registerForm')">重置</el-button>
+            <el-button type="primary" @click="submitForm('registerForm')">Register</el-button>
+            <el-button @click="resetForm('registerForm')">Reset</el-button>
           </el-form-item>
         </el-form>
       </section>
@@ -33,14 +33,14 @@ export default {
   data () {
     let checkUsername = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('用户名不能为空'));
+        return callback(new Error('Please input sername'));
       } else {
         callback();
       }
     };
     let validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入密码'));
+        callback(new Error('Please input password'));
       } else {
         if (this.registerForm.checkPassword !== '') {
           this.$refs.registerForm.validateField('checkPassword');
@@ -50,9 +50,9 @@ export default {
     };
     let validatePass2 = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请再次输入密码'));
+        callback(new Error('Please input confirm password'));
       } else if (value !== this.registerForm.password) {
-        callback(new Error('两次输入密码不一致!'));
+        callback(new Error('Two passwords not match!'));
       } else {
         callback();
       }
@@ -82,7 +82,7 @@ export default {
     this.$refs['registerForm'].resetFields();
   },
   created () {
-    document.title = 'CTS注册'
+    document.title = 'Register'
   },
   methods: {
     submitForm (formName) {
@@ -96,18 +96,18 @@ export default {
             console.log(res);
             if (res.status === 200 && res.data.status === 200) {
               this.$message({
-                message: '注册成功!',
+                message: 'Register success!',
                 type: 'success'
               });
               this.$router.push('/login');
             } else {
-              this.$message.error('用户名已存在!');
+              this.$message.error('Username duplicate!');
               this.$refs[formName].resetFields();
             }
           });
         } else {
           this.$message({
-            message: '请输入用户名和密码!',
+            message: 'Please input username and password!',
             type: 'warning'
           });
         }

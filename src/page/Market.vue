@@ -11,45 +11,71 @@
         <el-container>
           <el-main v-bind:class="{'main-collapse': changeMainClass, 'main-notCollapse': true }">
             <template>
-                <el-row>
-                  <el-col :span="24">
-                    <el-breadcrumb separator-class="el-icon-arrow-right">
-                      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-                      <el-breadcrumb-item :to="{ path: '/catalog' }">期货目录</el-breadcrumb-item>
-                      <el-breadcrumb-item>{{futureName}}</el-breadcrumb-item>
-                      <el-breadcrumb-item>{{futurePeriod}}</el-breadcrumb-item>
-                    </el-breadcrumb>
-                  </el-col>
-                </el-row>
-              </template>
+              <el-row>
+                <el-col :span="24">
+                  <el-breadcrumb separator-class="el-icon-arrow-right">
+                    <el-breadcrumb-item :to="{ path: '/home' }">Home</el-breadcrumb-item>
+                    <el-breadcrumb-item :to="{ path: '/catalog' }">Futures Catalog</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{futureName}}</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{futurePeriod}}</el-breadcrumb-item>
+                  </el-breadcrumb>
+                </el-col>
+              </el-row>
+            </template>
             <el-tabs type="card" v-model="activeBroker" style="padding-top: 10px" @tab-click="handleClick">
               <el-tab-pane label="Broker A" name="first"></el-tab-pane>
               <el-tab-pane label="Broker B" name="second"></el-tab-pane>
               <el-tab-pane label="Broker C" name="third"></el-tab-pane>
             </el-tabs>
-            <div style="width: 25%; float: left">
+            <el-card style="padding-top: 10px; width: 25%; height: 480px;float: left">
+              <span style="text-align: center; margin-top: 0">ORDER BOOK</span>
               <el-table :data="sells" size="mini" highlight-current-row :default-sort = "{prop: 'price', order: 'descending'}" max-height="200"
                         id="sellsTable" tooltip-effect="light" v-loading="sellsLoading" element-loading-spinner="el-icon-loading">
-                <el-table-column prop="0" label="价格" sortable width="120" show-overflow-tooltip>
+                <el-table-column prop="0" label="PRICE" sortable width="120" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="1" label="数量" width="120">
+                <el-table-column prop="1" label="AMOUNT" width="120">
                 </el-table-column>
               </el-table>
               <el-table :data="buys" size="mini" highlight-current-row :default-sort = "{prop: 'id', order: 'ascending'}" max-height="200"
                         id="buysTable" tooltip-effect="light" v-loading="sellsLoading" element-loading-spinner="el-icon-loading" :show-header="false">
-                <el-table-column prop="0" label="价格" sortable width="120" show-overflow-tooltip>
+                <el-table-column prop="0" label="PRICE" sortable width="120" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="1" label="数量" width="120">
+                <el-table-column prop="1" label="AMOUNT" width="120">
                 </el-table-column>
               </el-table>
-            </div>
-            <template>
-              <div id="chartdiv" style="width: 45%; height: 400px; float: left"></div>
-            </template>
+            </el-card>
+            <el-card style="padding-top: 10px; margin-left: 5px; width: 45%; height: 480px; float: left">
+              <span style="text-align: center">DEPTH CHART</span>
+              <div id="chartdiv" style="width: 100%; height: 400px; z-index: 100;"></div>
+            </el-card>
+            <el-card style="padding-top: 10px; margin-left: 5px; width: 28%; height: 480px; float: left">
+              <span style="text-align: center">ORDER FORM</span>
+              <el-tabs v-model="activeOrderType" style="width: 100%" @click="handleClick2">
+                <el-tab-pane label="MARKET" name="market"></el-tab-pane>
+                <el-tab-pane label="LIMIT" name="limit"></el-tab-pane>
+                <el-tab-pane label="STOP" name="stop"></el-tab-pane>
+              </el-tabs>
+              <el-button size="mini" style="width: 40%" plain v-bind:type="btnBuy" @click="selectSideBuy">BUY</el-button>
+              <el-button size="mini" style="width: 40%" plain v-bind:type="btnSell" @click="selectSideSell">SELL</el-button>
+              <el-form :model="orderForm" status-icon :rules="orderRules" ref="orderForm">
+                <el-form-item label="AMOUNT" prop="amount">
+                  <el-input v-model.number="orderForm.amount"></el-input>
+                </el-form-item>
+                <el-form-item v-if="activeOrderType==='limit'" label="LIMIT PRICE" prop="price">
+                  <el-input v-model="orderForm.price"></el-input>
+                </el-form-item>
+                <el-form-item v-else-if="activeOrderType==='stop'" label="STOP PRICE" prop="price">
+                  <el-input v-model="orderForm.price"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button size="small" style="width: 80%" plain v-bind:type="btnSubmit" @click="submitForm('orderForm')">PLACE ORDER</el-button>
+                </el-form-item>
+              </el-form>
+            </el-card>
           </el-main>
         </el-container>
       </el-container>
-      <el-footer class="footer2">
+      <el-footer class="footer">
         <Footer></Footer>
       </el-footer>
     </el-container>
@@ -67,6 +93,17 @@ export default {
     Header, NavMenu, Footer
   },
   data () {
+    let checkPrice = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Please input price'));
+      } else {
+        let reg = /^[-+]?[0-9]*\.?[0-9]+$/;
+        if (!reg.test(value)) {
+          callback(new Error('Price format error'));
+        }
+      }
+      callback();
+    };
     return {
       futureName: '',
       futurePeriod: '',
@@ -77,8 +114,24 @@ export default {
       ws: null,
       sellsLoading: false,
       activeBroker: 'first',
-      dataProvider: [],
-      dataProvider2: []
+      activeOrderType: 'market',
+      activeOrderSide: 'buy',
+      btnBuy: 'success',
+      btnSell: 'info',
+      btnSubmit: 'success',
+      orderForm: {
+        amount: 0,
+        price: 0
+      },
+      orderRules: {
+        amount: [
+          { required: true, message: 'Please input amount', trigger: 'blur' },
+          { type: 'number', message: 'Amount must be integer', trigger: 'blur' }
+        ],
+        price: [
+          { validator: checkPrice, trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -95,12 +148,6 @@ export default {
         // console.log(tmp.scrollTop)
       })
     },
-    dataProvider2: {
-      handler: function () {
-        this.drawCharts();
-      },
-      deep: true
-    },
     orderBook: {
       handler: function () {
         this.drawCharts();
@@ -109,7 +156,7 @@ export default {
     }
   },
   created () {
-    document.title = '市场行情';
+    document.title = 'Market';
     this.initWs()
   },
   mounted () {
@@ -118,8 +165,6 @@ export default {
     this.futurePeriod = this.$route.params.period;
     this.sellsLoading = true;
     this.runWs();
-    // this.dataProvider2 = {'bids': [[295.96, 10.34], [295.95, 5.67], [295.93, 3.46], [295.92, 4.62], [295.9, 5.17]],
-    //  'asks': [[295.89, 2.41], [295.88, 3.45], [295.87, 1.56], [295.86, 7.23], [295.85, 3.41]]};
   },
   beforeDestroy () {
     this.closeSocket()
@@ -221,10 +266,10 @@ export default {
           'textAlign': 'left'
         },
         'valueAxes': [{
-          'title': 'Volume'
+          'title': ''
         }],
         'categoryAxis': {
-          'title': this.futureName + this.futurePeriod,
+          'title': this.futureName + '-' + this.futurePeriod,
           'minHorizontalGap': 100,
           'startOnAxis': true,
           'showFirstLabel': false,
@@ -263,13 +308,12 @@ export default {
     handleClick (tab, event) {
       console.log(tab, event);
       console.log(this.activeBroker);
-
-      let obj1 = [Math.random() * 100, Math.random() * 10];
-      let obj2 = [Math.random() * 100, Math.random() * 10];
-      this.dataProvider2.bids.push(obj1);
-      this.dataProvider2.asks.push(obj2);
-      this.sells.push(obj1);
-      console.log(this.dataProvider2);
+      this.$refs['orderForm'].resetFields();
+    },
+    handleClick2 (tab, event) {
+      console.log(tab, event);
+      console.log(this.activeOrderType);
+      this.$refs['orderForm'].resetFields();
     },
     initWs () {
       if ('WebSocket' in window) {
@@ -311,6 +355,36 @@ export default {
           _self_.sendMessage(content)
         }, 300)
       }
+    },
+    selectSideBuy () {
+      this.activeOrderSide = 'buy';
+      this.btnBuy = 'success';
+      this.btnSell = 'info';
+      this.btnSubmit = 'success';
+      this.$refs['orderForm'].resetFields();
+    },
+    selectSideSell () {
+      this.activeOrderSide = 'sell';
+      this.btnBuy = 'info';
+      this.btnSell = 'danger';
+      this.btnSubmit = 'danger';
+      this.$refs['orderForm'].resetFields();
+    },
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let orderParams = Object.assign({}, this.orderForm);
+          orderParams.side = this.activeOrderSide;
+          orderParams.type = this.activeOrderType;
+          orderParams.brokerName = this.activeBroker;
+          console.log(orderParams);
+          this.$message({
+            message: 'Submit success',
+            type: 'success'
+          });
+          this.$refs[formName].resetFields();
+        }
+      });
     }
   }
 }

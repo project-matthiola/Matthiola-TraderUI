@@ -6,10 +6,10 @@
           <el-menu-item index="1"><i class="el-icon-menu"></i></el-menu-item>
           <el-submenu index="2">
             <template slot="title">{{username}}</template>
-            <el-menu-item index="2-1"><i class="el-icon-setting"></i>设置</el-menu-item>
-            <el-menu-item index="2-2"><i class="el-icon-circle-close-outline"></i>登出</el-menu-item>
+            <el-menu-item index="2-1"><i class="el-icon-setting"></i>Setting</el-menu-item>
+            <el-menu-item index="2-2"><i class="el-icon-circle-close-outline"></i>Logout</el-menu-item>
           </el-submenu>
-          <el-menu-item index="3">客服中心</el-menu-item>
+          <el-menu-item index="3">Service Center</el-menu-item>
         </el-menu>
       </el-col>
       <el-col :span="1" style="height: 60px">

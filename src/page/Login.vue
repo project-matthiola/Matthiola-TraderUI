@@ -3,19 +3,19 @@
     <transition class="form-fade" mode="in-out">
       <section class="form_container" v-show="showLogin">
         <div class="manage_tip">
-          <p>CTS 登录</p>
+          <p>Login</p>
         </div>
         <el-form :model="loginForm" :rules="rules" ref="loginForm">
-          <el-form-item label="用户名" prop="username">
+          <el-form-item label="Username" prop="username">
             <el-input type="text" v-model="loginForm.username" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
+          <el-form-item label="Password" prop="password">
             <el-input type="password" v-model="loginForm.password" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('loginForm')">登录</el-button>
-            <el-button @click="resetForm('loginForm')">重置</el-button>
-            <el-button type="success" @click="gotoRegister">注册</el-button>
+            <el-button type="primary" @click="submitForm('loginForm')">Login</el-button>
+            <el-button @click="resetForm('loginForm')">Reset</el-button>
+            <el-button type="success" @click="gotoRegister">Register</el-button>
           </el-form-item>
         </el-form>
       </section>
@@ -36,10 +36,10 @@ export default {
       },
       rules: {
         username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
+          { required: true, message: 'Please input username', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
+          { required: true, message: 'Please input password', trigger: 'blur' }
         ]
       },
       showLogin: false
@@ -53,7 +53,7 @@ export default {
     this.$refs['loginForm'].resetFields();
   },
   created () {
-    document.title = 'CTS登录'
+    document.title = 'Login'
   },
   methods: {
     submitForm (formName) {
@@ -67,7 +67,7 @@ export default {
             console.log(res);
             if (res.status === 200 && res.data.status === 200) {
               this.$message({
-                message: '登录成功!',
+                message: 'Login success!',
                 type: 'success'
               });
               let token = res.data.data;
@@ -85,7 +85,7 @@ export default {
           });
         } else {
           this.$message({
-            message: '请输入用户名和密码!',
+            message: 'Please input username and password!',
             type: 'warning'
           });
         }
