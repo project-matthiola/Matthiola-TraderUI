@@ -6,6 +6,7 @@ import HelloWorld from '@/components/HelloWorld'
 import TestWebSocket from '@/page/TestWebSocket'
 import Market from '@/page/Market'
 import Catalog from '@/page/Catalog'
+import Order from '@/page/Order'
 
 Vue.use(Router);
 
@@ -54,6 +55,14 @@ let routes = [
       index: 2
     },
     component: Catalog
+  },
+  {
+    path: '/myOrder',
+    name: 'myOrder',
+    meta: {
+      index: 3
+    },
+    component: Order
   }
 ];
 

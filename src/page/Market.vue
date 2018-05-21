@@ -62,10 +62,10 @@
                   <el-input v-model.number="orderForm.amount"></el-input>
                 </el-form-item>
                 <el-form-item v-if="activeOrderType==='limit'" label="LIMIT PRICE" prop="price">
-                  <el-input v-model="orderForm.price"></el-input>
+                  <el-input v-model.number="orderForm.price"></el-input>
                 </el-form-item>
                 <el-form-item v-else-if="activeOrderType==='stop'" label="STOP PRICE" prop="price">
-                  <el-input v-model="orderForm.price"></el-input>
+                  <el-input v-model.number="orderForm.price"></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-button size="small" style="width: 80%" plain v-bind:type="btnSubmit" @click="submitForm('orderForm')">PLACE ORDER</el-button>
@@ -86,6 +86,7 @@
 import Header from '@/components/Header'
 import NavMenu from '@/components/NavMenu'
 import Footer from '@/components/Footer'
+import { sendOrder } from '@/common/api'
 /* eslint-disable */
 export default {
   name: 'Market',
@@ -100,6 +101,17 @@ export default {
         let reg = /^[-+]?[0-9]*\.?[0-9]+$/;
         if (!reg.test(value)) {
           callback(new Error('Price format error'));
+        }
+      }
+      callback();
+    };
+    let checkAmount = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Please input amount'));
+      } else {
+        let reg = /^[-+]?[0-9]*\.?[0-9]+$/;
+        if (!reg.test(value)) {
+          callback(new Error('Amount format error'));
         }
       }
       callback();
@@ -120,13 +132,12 @@ export default {
       btnSell: 'info',
       btnSubmit: 'success',
       orderForm: {
-        amount: 0,
-        price: 0
+        amount: 0.0,
+        price: 0.0
       },
       orderRules: {
         amount: [
-          { required: true, message: 'Please input amount', trigger: 'blur' },
-          { type: 'number', message: 'Amount must be integer', trigger: 'blur' }
+          { validator: checkAmount, trigger: 'blur' }
         ],
         price: [
           { validator: checkPrice, trigger: 'blur' }
@@ -374,15 +385,33 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let orderParams = Object.assign({}, this.orderForm);
-          orderParams.side = this.activeOrderSide;
-          orderParams.type = this.activeOrderType;
+          if (this.activeOrderType === 'market') orderParams.type = '1';
+          else if (this.activeOrderType === 'limit') orderParams.type = '2';
+          else if (this.activeOrderType === 'stop') orderParams.type = '3';
+
+          if (this.activeOrderSide === 'buy') orderParams.side = '1';
+          else if (this.activeOrderSide === 'sell') orderParams.side = '2';
+
           orderParams.brokerName = this.activeBroker;
+          orderParams.futureID = this.futureID;
           console.log(orderParams);
-          this.$message({
-            message: 'Submit success',
-            type: 'success'
+
+          sendOrder(orderParams).then((res) => {
+            if (res.status === 200 && res.data.status === 200) {
+              this.$message({
+                message: 'Submit success',
+                type: 'success'
+              });
+              this.$refs[formName].resetFields();
+            }
+          }).catch((err) => {
+            console.log(err);
           });
-          this.$refs[formName].resetFields();
+        } else {
+          this.$message({
+            message: 'Please input price & amount!',
+            type: 'warning'
+          });
         }
       });
     }
@@ -395,7 +424,7 @@ export default {
     width: 100%;
     margin-top: 0px;
     margin-left: 10px;
-    color: green;
+    color: red;
     font-size: small;
     line-height: 15px !important;
   }
@@ -421,7 +450,7 @@ export default {
   #buysTable {
     width: 100%;
     margin-left: 10px;
-    color: red;
+    color: green;
     font-size: small;
     line-height: 15px !important;
   }
