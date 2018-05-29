@@ -11,9 +11,9 @@
           <i class="el-icon-document"></i>
           <span slot="title">My Order</span>
         </el-menu-item>
-        <el-menu-item index="/tradeRecord">
+        <el-menu-item index="/trade">
           <i class="el-icon-edit-outline"></i>
-          <span slot="title">Trade Record</span>
+          <span slot="title">Trade History</span>
         </el-menu-item>
       </el-menu>
     </el-col>

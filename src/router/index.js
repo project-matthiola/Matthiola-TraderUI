@@ -7,6 +7,7 @@ import TestWebSocket from '@/page/TestWebSocket'
 import Market from '@/page/Market'
 import Catalog from '@/page/Catalog'
 import Order from '@/page/Order'
+import Trade from '@/page/Trade'
 
 Vue.use(Router);
 
@@ -63,6 +64,14 @@ let routes = [
       index: 3
     },
     component: Order
+  },
+  {
+    path: '/trade',
+    name: 'trade',
+    meta: {
+      index: 4
+    },
+    component: Trade
   }
 ];
 

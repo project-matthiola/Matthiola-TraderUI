@@ -10,6 +10,7 @@ import axios from 'axios'
 import store from './store'
 import './style/common.less'
 import Common from './common/common'
+import { refreshToken, isTokenAboutToExpired } from './common/api'
 
 Vue.config.productionTip = false
 
@@ -23,6 +24,22 @@ axios.interceptors.request.use(
   config => {
     if (sessionStorage.getItem('token') !== null) {
       config.headers.Authorization = `Bearer ${sessionStorage.getItem('token')}`;
+      if (isTokenAboutToExpired()) {
+        refreshToken().then((res) => {
+          if (res.data.status === 200 && res.data.message === 'success') {
+            let token = res.data.data;
+            sessionStorage.setItem('logintime', new Date().getTime().toString());
+            sessionStorage.setItem('token', token);
+          } else {
+            sessionStorage.clear();
+            ElementUI.Message.error('权限不足!');
+            router.replace({
+              path: '/login',
+              query: { redirect: router.currentRoute.fullPath }
+            })
+          }
+        });
+      }
     }
     return config;
   },
@@ -32,6 +49,44 @@ axios.interceptors.request.use(
 );
 
 // http response interceptor
+/*
+axios.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    if (error.response) {
+      switch (error.response.status) {
+        case 401:
+          refreshToken().then((res) => {
+            if (res.data.status === 200 && res.data.message === 'success') {
+              let token = res.data.data;
+              sessionStorage.setItem('token', token);
+            } else {
+              sessionStorage.clear();
+              ElementUI.Message.error('权限不足!');
+              router.replace({
+                path: '/login',
+                query: { redirect: router.currentRoute.fullPath }
+              })
+            }
+          });
+          break;
+        case 400:
+          sessionStorage.clear();
+          ElementUI.Message.error('权限不足!');
+          router.replace({
+            path: '/login',
+            query: { redirect: router.currentRoute.fullPath }
+          })
+      }
+    }
+    return Promise.reject(error.response.data);
+  }
+);
+*/
+
+
 axios.interceptors.response.use(
   response => {
     return response;
@@ -51,6 +106,7 @@ axios.interceptors.response.use(
     return Promise.reject(error.response.data);
   }
 );
+
 
 /* eslint-disable no-new */
 new Vue({

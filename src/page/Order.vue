@@ -32,7 +32,7 @@
             </div>
             <template>
               <el-table :data="myOrders" style="width: 100%; text-align: left" stripe
-                        highlight-current-row height="400px" size="small" v-loadin="listLoading">
+                        highlight-current-row height="450px" size="small" v-loadin="listLoading">
                 <el-table-column type="expand">
                   <template slot-scope="props">
                     <el-form label-position="left" inline class="demo-table-expand" size="small">
@@ -66,13 +66,14 @@
                     </el-form>
                   </template>
                 </el-table-column>
-                <el-table-column label="Order ID" prop="order_id" width="350" style="text-align: left"></el-table-column>
+                <el-table-column label="Order ID" prop="order_id" width="350"></el-table-column>
                 <el-table-column label="Futures" prop="futures_id" width="150"></el-table-column>
                 <el-table-column label="Order Type" prop="order_type" width="150"></el-table-column>
                 <el-table-column label="Status" prop="status" width="150"></el-table-column>
                 <el-table-column label="Operation" width="200">
                   <template slot-scope="scope">
-                    <el-button type="danger" plain size="mini" v-if="scope.row.status==='open'">Cancel</el-button>
+                    <el-button type="danger" plain size="mini" @click="handleCancel(scope.$index, scope.row)"
+                               v-if="scope.row.status==='new'||scope.row.status==='partially_filled'">Cancel</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -91,7 +92,7 @@
 import Header from '@/components/Header'
 import NavMenu from '@/components/NavMenu'
 import Footer from '@/components/Footer'
-import { requestFuturesCascader, requestOrderList } from '@/common/api'
+import { requestFuturesCascader, requestOrderList, refreshToken } from '@/common/api'
 
 export default {
   name: 'Order',
@@ -99,15 +100,18 @@ export default {
     Header, NavMenu, Footer
   },
   created () {
-    document.title = 'My Order'
+    document.title = 'My Order';
+    // this.initWs();
   },
   data () {
     return {
+      ws: null,
       listLoading: false,
       statusList: [
         {value: 'all', label: 'ALL'},
-        {value: 'open', label: 'OPEN'},
-        {value: 'done', label: 'DONE'},
+        {value: 'new', label: 'NEW'},
+        {value: 'partially_filled', label: 'PARTIALLY'},
+        {value: 'filled', label: 'FILLED'},
         {value: 'canceled', label: 'CANCELED'}
       ],
       selectedStatus: '',
@@ -122,7 +126,7 @@ export default {
           quantity: 50,
           open_quantity: 40,
           price: 30.12,
-          status: 'open',
+          status: 'new',
           created_at: '2018-05-17T12:00:00Z',
           updated_at: '2012-05-17T13:00:00Z'
         },
@@ -134,7 +138,7 @@ export default {
           quantity: 50,
           open_quantity: 40,
           price: 30.12,
-          status: 'cancel',
+          status: 'canceled',
           created_at: '2018-05-17T12:00:00Z',
           updated_at: '2012-05-17T13:00:00Z'
         },
@@ -146,11 +150,12 @@ export default {
           quantity: 50,
           open_quantity: 40,
           price: 30.12,
-          status: 'done',
+          status: 'partially_filled',
           created_at: '2018-05-17T12:00:00Z',
           updated_at: '2012-05-17T13:00:00Z'
         }
-      ]
+      ],
+      orderForm: {}
     }
   },
   computed: {
@@ -159,13 +164,22 @@ export default {
     }
   },
   mounted () {
-    this.listLoading = true;
     let cascaderParams = {};
     requestFuturesCascader(cascaderParams).then((res) => {
       if (res.status === 200 && res.data.status === 200) {
         this.futuresCascader = res.data.data;
       }
     });
+    // this.runWs();
+    /*
+    refreshToken().then((res) => {
+      let token = res.data.data;
+      sessionStorage.setItem('token', token);
+      console.log(sessionStorage.getItem('token'));
+    });
+    */
+    /*
+    this.listLoading = true;
     let initRequestParams = {
       'futuresID': '',
       'status': ''
@@ -176,22 +190,72 @@ export default {
         this.listLoading = false;
       }
     });
+    */
   },
   methods: {
     doFilter () {
+      /*
       let filterParams = {
         'futuresID': this.selectedFutures,
         'status': this.selectedStatus
       };
+      this.listLoading = true;
       requestOrderList(filterParams).then((res) => {
         if (res.status === 200 && res.data.status === 200) {
           this.myOrders = res.data.data;
         }
+        this.listLoading = false;
+      });
+      */
+      // let content = 'orders,' + this.selectedFutures + ',' + this.selectedStatus;
+      // this.sendMessage(content);
+    },
+    handleCancel (index, row) {
+      this.$confirm('Are you sure to cancel?', 'cancel', {
+        type: 'warning'
+      }).then(() => {
+        this.orderForm = Object.assign({}, row);
+        console.log(this.orderForm);
       });
     },
     handleChange (value) {
       console.log(this.selectedFutures);
       console.log(this.selectedStatus);
+    },
+    initWs () {
+      if ('WebSocket' in window) {
+        this.ws = new WebSocket('ws://localhost:8888/websocket')
+      } else {
+        this.$message.error('Sorry, websocket not supported by your browser.')
+      }
+      this.ws.onmessage = this.onMessage;
+      this.ws.onclose = this.onClose;
+    },
+    onMessage (e) {
+      let response = JSON.parse(e.data);
+      console.log(response);
+      let content = 'orders,' + this.selectedFutures + ',' + this.selectedStatus;
+      this.sendMessage(content);
+    },
+    sendMessage (msg) {
+      this.ws.send(msg)
+    },
+    closeSocket () {
+      this.ws.close()
+    },
+    onClose () {
+      console.log('ws closed')
+    },
+    runWs () {
+      let content = 'orders,' + this.selectedFutures + ',' + this.selectedStatus;
+      if (this.ws.readyState === this.ws.OPEN) {
+        this.sendMessage(content)
+      } else if (this.ws.readyState === this.ws.CONNECTING) {
+        let _self_ = this;
+        setTimeout(function () {
+          _self_.sendMessage(content)
+        }, 300)
+      }
     }
   }
 }

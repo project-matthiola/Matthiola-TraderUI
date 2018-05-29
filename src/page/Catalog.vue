@@ -32,7 +32,7 @@
                           <el-option v-for="item in future.futureInfo" :key="item.value" :label="item.period" :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-button type="primary" plain @click="selectFuture(index)" style="margin-top: 5px">View Market</el-button>
+                        <el-button type="primary" plain size="small" @click="selectFuture(index)" style="margin-top: 5px">View Market</el-button>
                       </div>
                     </div>
                   </el-card>
@@ -53,7 +53,7 @@
 import Header from '@/components/Header'
 import NavMenu from '@/components/NavMenu'
 import Footer from '@/components/Footer'
-import { requestFuturesList } from '@/common/api'
+import { requestFuturesList, refreshToken } from '@/common/api'
 export default {
   name: 'Catalog',
   components: {
@@ -74,7 +74,14 @@ export default {
         this.futures = res.data.data;
         // console.log(this.futures);
       }
-    })
+    });
+    /*
+    refreshToken().then((res) => {
+      let token = res.data.data;
+      sessionStorage.setItem('token', token);
+      console.log(sessionStorage.getItem('token'));
+    });
+    */
   },
   computed: {
     changeMainClass () {

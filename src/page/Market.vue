@@ -22,11 +22,14 @@
                 </el-col>
               </el-row>
             </template>
-            <el-tabs type="card" v-model="activeBroker" style="padding-top: 10px" @tab-click="handleClick">
-              <el-tab-pane label="Broker A" name="first"></el-tab-pane>
-              <el-tab-pane label="Broker B" name="second"></el-tab-pane>
-              <el-tab-pane label="Broker C" name="third"></el-tab-pane>
-            </el-tabs>
+            <el-row>
+              <el-col :span="24">
+                <el-tabs type="card" v-model="activeBroker"
+                         style="padding-top: 10px" @tab-click="handleClick">
+                  <el-tab-pane v-for="broker in brokers" v-bind:key="broker.broker_id" v-bind:label="broker.broker_name" v-bind:name="broker.broker_id"></el-tab-pane>
+                </el-tabs>
+              </el-col>
+            </el-row>
             <el-card style="padding-top: 10px; width: 25%; height: 480px;float: left">
               <span style="text-align: center; margin-top: 0">ORDER BOOK</span>
               <el-table :data="sells" size="mini" highlight-current-row :default-sort = "{prop: 'price', order: 'descending'}" max-height="200"
@@ -86,7 +89,7 @@
 import Header from '@/components/Header'
 import NavMenu from '@/components/NavMenu'
 import Footer from '@/components/Footer'
-import { sendOrder } from '@/common/api'
+import { sendOrder, refreshToken, requestBrokers } from '@/common/api'
 /* eslint-disable */
 export default {
   name: 'Market',
@@ -125,7 +128,8 @@ export default {
       sells: [],
       ws: null,
       sellsLoading: false,
-      activeBroker: 'first',
+      brokers: [],
+      activeBroker: 'brokerA',
       activeOrderType: 'market',
       activeOrderSide: 'buy',
       btnBuy: 'success',
@@ -176,6 +180,18 @@ export default {
     this.futurePeriod = this.$route.params.period;
     this.sellsLoading = true;
     this.runWs();
+    requestBrokers().then((res) => {
+      if (res.status === 200 && res.data.status === 200) {
+        this.brokers = res.data.data;
+      }
+    })
+    /*
+    refreshToken().then((res) => {
+      let token = res.data.data;
+      sessionStorage.setItem('token', token);
+      console.log(sessionStorage.getItem('token'));
+    });
+    */
   },
   beforeDestroy () {
     this.closeSocket()
@@ -343,7 +359,8 @@ export default {
       this.buys = response.bids;
       this.sellsLoading = false;
       // console.log(this.buys);
-      let content = this.futureID + "," + this.activeBroker;
+      // let content = 'orderBook,' + this.futureID + ',' + this.activeBroker;
+      let content = 'orderBook,futures1,' + this.activeBroker;
       this.sendMessage(content);
       // console.log(this.sells);
     },
@@ -357,7 +374,8 @@ export default {
       console.log('ws closed')
     },
     runWs () {
-      let content = this.futureID + "," + this.activeBroker;
+      // let content = 'orderBook,' + this.futureID + ',' + this.activeBroker;
+      let content = 'orderBook,futures1,' + this.activeBroker;
       if (this.ws.readyState === this.ws.OPEN) {
         this.sendMessage(content)
       } else if (this.ws.readyState === this.ws.CONNECTING) {
@@ -384,28 +402,32 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let orderParams = Object.assign({}, this.orderForm);
-          if (this.activeOrderType === 'market') orderParams.type = '1';
-          else if (this.activeOrderType === 'limit') orderParams.type = '2';
-          else if (this.activeOrderType === 'stop') orderParams.type = '3';
+          this.$confirm('Are you sure to submit?', 'submit', {}).then(() => {
+            let orderParams = Object.assign({}, this.orderForm);
+            if (this.activeOrderType === 'market') orderParams.type = '1';
+            else if (this.activeOrderType === 'limit') orderParams.type = '2';
+            else if (this.activeOrderType === 'stop') orderParams.type = '3';
 
-          if (this.activeOrderSide === 'buy') orderParams.side = '1';
-          else if (this.activeOrderSide === 'sell') orderParams.side = '2';
+            if (this.activeOrderSide === 'buy') orderParams.side = '1';
+            else if (this.activeOrderSide === 'sell') orderParams.side = '2';
 
-          orderParams.brokerName = this.activeBroker;
-          orderParams.futureID = this.futureID;
-          console.log(orderParams);
+            orderParams.brokerName = this.activeBroker;
+            orderParams.futureID = this.futureID;
+            console.log(orderParams);
 
-          sendOrder(orderParams).then((res) => {
-            if (res.status === 200 && res.data.status === 200) {
-              this.$message({
-                message: 'Submit success',
-                type: 'success'
-              });
-              this.$refs[formName].resetFields();
-            }
-          }).catch((err) => {
-            console.log(err);
+            sendOrder(orderParams).then((res) => {
+              if (res.status === 200 && res.data.status === 200) {
+                this.$message({
+                  message: 'Submit success',
+                  type: 'success'
+                });
+                this.$refs[formName].resetFields();
+              } else {
+                this.$message.error('Submit fail');
+              }
+            }).catch((err) => {
+              console.log(err);
+            });
           });
         } else {
           this.$message({

@@ -71,6 +71,8 @@ export default {
                 type: 'success'
               });
               let token = res.data.data;
+              // let expire = res.data.message;
+              sessionStorage.setItem('logintime', new Date().getTime().toString());
               sessionStorage.setItem('token', token);
               sessionStorage.setItem('username', this.loginForm.username);
               if (this.$route.query.redirect) {
