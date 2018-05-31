@@ -9,7 +9,8 @@
           <NavMenu></NavMenu>
         </el-aside>
         <el-container>
-          <el-main v-bind:class="{'main-collapse': changeMainClass, 'main-notCollapse': true }">
+          <!-- <el-main v-bind:class="{'main-collapse': changeMainClass, 'main-notCollapse': true }"> -->
+          <el-main v-bind:class="{'main-notCollapse': true }">
             <template>
               <el-row>
                 <el-col :span="24">
@@ -30,29 +31,47 @@
                 </el-tabs>
               </el-col>
             </el-row>
-            <el-card style="padding-top: 10px; width: 25%; height: 480px;float: left">
-              <span style="text-align: center; margin-top: 0">ORDER BOOK</span>
-              <el-table :data="sells" size="mini" highlight-current-row :default-sort = "{prop: 'price', order: 'descending'}" max-height="200"
-                        id="sellsTable" tooltip-effect="light" v-loading="sellsLoading" element-loading-spinner="el-icon-loading">
-                <el-table-column prop="0" label="PRICE" sortable width="120" show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column prop="1" label="AMOUNT" width="120">
-                </el-table-column>
-              </el-table>
-              <el-table :data="buys" size="mini" highlight-current-row :default-sort = "{prop: 'id', order: 'ascending'}" max-height="200"
-                        id="buysTable" tooltip-effect="light" v-loading="sellsLoading" element-loading-spinner="el-icon-loading" :show-header="false">
-                <el-table-column prop="0" label="PRICE" sortable width="120" show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column prop="1" label="AMOUNT" width="120">
-                </el-table-column>
-              </el-table>
+            <el-card style="padding-top: 0px; width: 28%; height: 500px;float: left">
+              <span style="float: left; margin-top: 0; width:45%; font-size: large">{{ activeTable }}</span>
+              <div style="float: right">
+                <el-button type="text" size="mini" v-bind:style="{color: btnOBColor}" @click="activeOrderBook"><u>OrderBook</u></el-button>
+                <el-button type="text" size="mini" v-bind:style="{color: btnTHColor, marginLeft: 0 }" @click="activeTradeHistory"><u>TradeHistory</u></el-button>
+              </div>
+              <div v-show="activeOB">
+                <el-table :data="sells" size="mini" highlight-current-row :default-sort = "{prop: 'price', order: 'descending'}" max-height="200"
+                          id="sellsTable" tooltip-effect="light" v-loading="sellsLoading" element-loading-spinner="el-icon-loading">
+                  <el-table-column prop="0" label="PRICE" sortable width="120" show-overflow-tooltip>
+                  </el-table-column>
+                  <el-table-column prop="1" label="AMOUNT" width="120">
+                  </el-table-column>
+                </el-table>
+                <el-table :data="buys" size="mini" highlight-current-row :default-sort = "{prop: 'id', order: 'ascending'}" max-height="200"
+                          id="buysTable" tooltip-effect="light" v-loading="sellsLoading" element-loading-spinner="el-icon-loading" :show-header="false">
+                  <el-table-column prop="0" label="PRICE" sortable width="120" show-overflow-tooltip>
+                  </el-table-column>
+                  <el-table-column prop="1" label="AMOUNT" width="120">
+                  </el-table-column>
+                </el-table>
+              </div>
+              <div v-show="activeTH">
+                <el-table :data="trades" size="mini" highlight-current-row max-height="400"
+                          id="tradesTable" tooltip-effect="light" v-loading="tradesLoading" element-loading-spinner="el-icon-loading">
+                  <el-table-column prop="0" label="PRICE" width="90" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="1" label="AMOUNT" width="90" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="2" label="TIME" width="120" show-overflow-tooltip></el-table-column>
+                </el-table>
+              </div>
             </el-card>
-            <el-card style="padding-top: 10px; margin-left: 5px; width: 45%; height: 480px; float: left">
-              <span style="text-align: center">DEPTH CHART</span>
+            <el-card style="padding-top: 0px; margin-left: 5px; width: 45%; height: 500px; float: left">
+              <span style="float: left; margin-top: 0; width: 30%; font-size: large">{{ activeChart }}</span>
+              <div style="float: right">
+                <el-button type="text" size="mini" v-bind:style="{color: btnMDColor}" @click="activeMarketDepth"><u>Market Depth</u></el-button>
+                <el-button type="text" size="mini" v-bind:style="{color: btnPCColor, marginLeft: 0 }" @click="activePriceChart"><u>Price Chart</u></el-button>
+              </div>
               <div id="chartdiv" style="width: 100%; height: 400px; z-index: 100;"></div>
             </el-card>
-            <el-card style="padding-top: 10px; margin-left: 5px; width: 28%; height: 480px; float: left">
-              <span style="text-align: center">ORDER FORM</span>
+            <el-card style="padding-top: 0px; margin-left: 5px; width: 25%; height: 500px; float: left">
+              <span style="text-align: center; font-size: large">ORDER FORM</span>
               <el-tabs v-model="activeOrderType" style="width: 100%" @click="handleClick2">
                 <el-tab-pane label="MARKET" name="market"></el-tab-pane>
                 <el-tab-pane label="LIMIT" name="limit"></el-tab-pane>
@@ -61,17 +80,24 @@
               <el-button size="mini" style="width: 40%" plain v-bind:type="btnBuy" @click="selectSideBuy">BUY</el-button>
               <el-button size="mini" style="width: 40%" plain v-bind:type="btnSell" @click="selectSideSell">SELL</el-button>
               <el-form :model="orderForm" status-icon :rules="orderRules" ref="orderForm">
-                <el-form-item label="AMOUNT" prop="amount">
+                <el-form-item label="AMOUNT" prop="amount" style="margin-top: 0 !important; margin-bottom: 0 !important;">
                   <el-input v-model.number="orderForm.amount"></el-input>
                 </el-form-item>
-                <el-form-item v-if="activeOrderType==='limit'" label="LIMIT PRICE" prop="price">
-                  <el-input v-model.number="orderForm.price"></el-input>
+                <el-form-item v-if="activeOrderType==='limit'" label="LIMIT PRICE" prop="price" style="margin-top: 0 !important; margin-bottom: 0 !important;">
+                  <el-input v-model.number="orderForm.price" style="margin-top: 0 !important;"></el-input>
                 </el-form-item>
-                <el-form-item v-else-if="activeOrderType==='stop'" label="STOP PRICE" prop="price">
-                  <el-input v-model.number="orderForm.price"></el-input>
+                <el-form-item v-else-if="activeOrderType==='stop'" label="STOP PRICE" prop="price" style="margin-top: 0 !important; margin-bottom: 0 !important;">
+                  <el-input v-model.number="orderForm.price" style="margin-top: 0 !important;"></el-input>
                 </el-form-item>
+                <el-collapse v-model="activeNames" v-if="activeOrderType==='stop'" style="margin-top: 0 !important; margin-bottom: 0 !important;">
+                  <el-collapse-item title="Advanced" name="advanced">
+                    <el-form-item label="LIMIT PRICE" prop="price2" style="margin-top: 0 !important; margin-bottom: 0 !important;">
+                      <el-input v-model.number="orderForm.price2"></el-input>
+                    </el-form-item>
+                  </el-collapse-item>
+                </el-collapse>
                 <el-form-item>
-                  <el-button size="small" style="width: 80%" plain v-bind:type="btnSubmit" @click="submitForm('orderForm')">PLACE ORDER</el-button>
+                  <el-button size="small" style="width: 80%; margin-top: 15px" plain v-bind:type="btnSubmit" @click="submitForm('orderForm')">PLACE ORDER</el-button>
                 </el-form-item>
               </el-form>
             </el-card>
@@ -108,6 +134,17 @@ export default {
       }
       callback();
     };
+    let checkPrice2 = (rule, value, callback) => {
+      if (value === '') {
+        callback();
+      } else {
+        let reg = /^[-+]?[0-9]*\.?[0-9]+$/;
+        if (!reg.test(value)) {
+          callback(new Error('Price format error'));
+        }
+      }
+      callback();
+    };
     let checkAmount = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('Please input amount'));
@@ -123,11 +160,21 @@ export default {
       futureName: '',
       futurePeriod: '',
       futureID: '',
+      activeTable: 'Order Book',
+      activeOB: true,
+      activeTH: false,
+      activeChart: 'Market Depth',
+      btnOBColor: '#409eff',
+      btnTHColor: 'gray',
+      btnMDColor: '#409eff',
+      btnPCColor: 'gray',
       orderBook: {},
       buys: [],
       sells: [],
+      trades: [],
       ws: null,
       sellsLoading: false,
+      tradesLoading: false,
       brokers: [],
       activeBroker: 'brokerA',
       activeOrderType: 'market',
@@ -137,7 +184,8 @@ export default {
       btnSubmit: 'success',
       orderForm: {
         amount: 0.0,
-        price: 0.0
+        price: 0.0,
+        price2: 0.0
       },
       orderRules: {
         amount: [
@@ -145,8 +193,12 @@ export default {
         ],
         price: [
           { validator: checkPrice, trigger: 'blur' }
+        ],
+        price2: [
+          { validator: checkPrice2, trigger: 'blur' }
         ]
-      }
+      },
+      activeNames: ''
     }
   },
   computed: {
@@ -172,13 +224,15 @@ export default {
   },
   created () {
     document.title = 'Market';
-    this.initWs()
+    this.initWs();
+    this.$store.state.isCollapse = true
   },
   mounted () {
     this.futureID = this.$route.params.Fid;
     this.futureName = this.$route.params.futureName;
     this.futurePeriod = this.$route.params.period;
     this.sellsLoading = true;
+    this.tradesLoading = true;
     this.runWs();
     requestBrokers().then((res) => {
       if (res.status === 200 && res.data.status === 200) {
@@ -352,16 +406,29 @@ export default {
       this.ws.onclose = this.onClose;
     },
     onMessage (e) {
-      this.sellsLoading = true;
       let response = JSON.parse(e.data);
-      this.orderBook = response;
-      this.sells = response.asks;
-      this.buys = response.bids;
-      this.sellsLoading = false;
+      if (response.type === 'orderBook') {
+        this.sellsLoading = true;
+        this.orderBook = response.data;
+        this.sells = response.data.asks;
+        this.buys = response.data.bids;
+        this.sellsLoading = false;
+        let content = 'orderBook,futures1,' + this.activeBroker;
+        this.sendMessage(content);
+      } else if (response.type === 'trade') {
+        this.tradesLoading = true;
+        this.trades = response.data;
+        let content2 = 'trade,futures1,' + this.activeBroker;
+        this.tradesLoading = false;
+        this.sendMessage(content2);
+      }
+
       // console.log(this.buys);
       // let content = 'orderBook,' + this.futureID + ',' + this.activeBroker;
-      let content = 'orderBook,futures1,' + this.activeBroker;
-      this.sendMessage(content);
+      // let content = 'orderBook,futures1,' + this.activeBroker;
+      // let content2 = 'trade,futures1,' + this.activeBroker;
+      // this.sendMessage(content);
+      // this.sendMessage(content2);
       // console.log(this.sells);
     },
     sendMessage (msg) {
@@ -376,12 +443,15 @@ export default {
     runWs () {
       // let content = 'orderBook,' + this.futureID + ',' + this.activeBroker;
       let content = 'orderBook,futures1,' + this.activeBroker;
+      let content2 = 'trade,futures1,' + this.activeBroker;
       if (this.ws.readyState === this.ws.OPEN) {
-        this.sendMessage(content)
+        this.sendMessage(content);
+        this.sendMessage(content2);
       } else if (this.ws.readyState === this.ws.CONNECTING) {
         let _self_ = this;
         setTimeout(function () {
-          _self_.sendMessage(content)
+          _self_.sendMessage(content);
+          _self_.sendMessage(content2);
         }, 300)
       }
     },
@@ -436,6 +506,30 @@ export default {
           });
         }
       });
+    },
+    activeOrderBook () {
+      this.btnOBColor = '#409eff';
+      this.btnTHColor = 'gray';
+      this.activeTable = 'Order Book';
+      this.activeOB = true;
+      this.activeTH = false;
+    },
+    activeTradeHistory () {
+      this.btnOBColor = 'gray';
+      this.btnTHColor = '#409eff';
+      this.activeTable = 'Trade History';
+      this.activeOB = false;
+      this.activeTH = true;
+    },
+    activeMarketDepth () {
+      this.btnMDColor = '#409eff';
+      this.btnPCColor = 'gray';
+      this.activeChart = 'Market Depth';
+    },
+    activePriceChart () {
+      this.btnMDColor = 'gray';
+      this.btnPCColor = '#409eff';
+      this.activeChart = 'Price Chart';
     }
   }
 }

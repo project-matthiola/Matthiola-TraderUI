@@ -15,6 +15,12 @@
           <i class="el-icon-edit-outline"></i>
           <span slot="title">Trade History</span>
         </el-menu-item>
+        <el-menu-item></el-menu-item>
+        <el-menu-item></el-menu-item>
+        <el-menu-item></el-menu-item>
+        <el-menu-item></el-menu-item>
+        <el-menu-item></el-menu-item>
+        <el-menu-item></el-menu-item>
       </el-menu>
     </el-col>
   </el-row>

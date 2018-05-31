@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
+import locale from 'element-ui/lib/locale/lang/en'
 import 'element-ui/lib/theme-chalk/index.css'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 import axios from 'axios'
@@ -16,7 +17,7 @@ Vue.config.productionTip = false
 
 Vue.component(CollapseTransition.name, CollapseTransition)
 
-Vue.use(ElementUI)
+Vue.use(ElementUI, { locale })
 Vue.use(Common)
 
 // http request interceptor
@@ -24,6 +25,7 @@ axios.interceptors.request.use(
   config => {
     if (sessionStorage.getItem('token') !== null) {
       config.headers.Authorization = `Bearer ${sessionStorage.getItem('token')}`;
+      /*
       if (isTokenAboutToExpired()) {
         refreshToken().then((res) => {
           if (res.data.status === 200 && res.data.message === 'success') {
@@ -32,7 +34,7 @@ axios.interceptors.request.use(
             sessionStorage.setItem('token', token);
           } else {
             sessionStorage.clear();
-            ElementUI.Message.error('权限不足!');
+            ElementUI.Message.error('Authorization Error!');
             router.replace({
               path: '/login',
               query: { redirect: router.currentRoute.fullPath }
@@ -40,6 +42,7 @@ axios.interceptors.request.use(
           }
         });
       }
+      */
     }
     return config;
   },
@@ -85,8 +88,6 @@ axios.interceptors.response.use(
   }
 );
 */
-
-
 axios.interceptors.response.use(
   response => {
     return response;
@@ -96,7 +97,7 @@ axios.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           sessionStorage.clear();
-          ElementUI.Message.error('权限不足!');
+          ElementUI.Message.error('Authorization Error!');
           router.replace({
             path: '/login',
             query: { redirect: router.currentRoute.fullPath }

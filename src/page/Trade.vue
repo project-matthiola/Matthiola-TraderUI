@@ -9,7 +9,7 @@
           <NavMenu></NavMenu>
         </el-aside>
         <el-container>
-          <el-main v-bind:class="{'main-collapse': changeMainClass, 'main-notCollapse': true}">
+          <el-main v-bind:class="{'main-notCollapse': true}">
             <template>
               <el-row>
                 <el-col :span="24">
@@ -73,7 +73,8 @@ export default {
     NavMenu, Footer, Header
   },
   created () {
-    document.title = 'Trade History'
+    document.title = 'Trade History';
+    this.$store.state.isCollapse = true
   },
   computed: {
     changeMainClass () {
