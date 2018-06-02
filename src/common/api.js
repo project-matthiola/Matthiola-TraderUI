@@ -33,6 +33,9 @@ export const requestFuturesList = params => {
 export const sendOrder = params => {
   return axios.post(`${orderUrl}/sendOrder`, params)
 };
+export const cancelOrder = params => {
+  return axios.post(`${orderUrl}/cancelOrder`, params)
+};
 export const requestFuturesCascader = params => {
   return axios.get(`${futureUrl}/getFuturesCascader`, {params: params})
 };

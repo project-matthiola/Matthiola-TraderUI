@@ -476,7 +476,18 @@ export default {
             let orderParams = Object.assign({}, this.orderForm);
             if (this.activeOrderType === 'market') orderParams.type = '1';
             else if (this.activeOrderType === 'limit') orderParams.type = '2';
-            else if (this.activeOrderType === 'stop') orderParams.type = '3';
+            else if (this.activeOrderType === 'stop') {
+              let stopPrice = orderParams.price;
+              let limitPrice = orderParams.price2;
+              if (limitPrice === 0.0 || limitPrice === '') {
+                orderParams.type = '4';
+                limitPrice = 0.0;
+              } else {
+                orderParams.type = '3';
+              }
+              orderParams.price = limitPrice;
+              orderParams.price2 = stopPrice;
+            }
 
             if (this.activeOrderSide === 'buy') orderParams.side = '1';
             else if (this.activeOrderSide === 'sell') orderParams.side = '2';

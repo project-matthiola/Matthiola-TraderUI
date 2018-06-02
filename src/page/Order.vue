@@ -5,11 +5,12 @@
         <Header></Header>
       </el-header>
       <el-container>
-        <el-aside class="aside">
+        <!--<el-aside class="aside2">-->
+        <el-aside v-bind:class="{'aside': changeMainClass, 'aside3': true}">
           <NavMenu></NavMenu>
         </el-aside>
         <el-container>
-          <el-main v-bind:class="{'main-notCollapse': true}">
+          <el-main v-bind:class="{ 'main-notCollapse': true}">
             <template>
               <el-row>
                 <el-col :span="24">
@@ -67,10 +68,13 @@
                   </template>
                 </el-table-column>
                 <el-table-column label="Order ID" prop="order_id" width="350"></el-table-column>
-                <el-table-column label="Futures" prop="futures_id" width="150"></el-table-column>
-                <el-table-column label="Order Type" prop="order_type" width="150"></el-table-column>
-                <el-table-column label="Status" prop="status" width="150"></el-table-column>
-                <el-table-column label="Operation" width="200">
+                <el-table-column label="Futures" prop="futures_id" width="120"></el-table-column>
+                <el-table-column label="Order Type" prop="order_type" width="120"></el-table-column>
+                <el-table-column label="Side" prop="side" width="100"></el-table-column>
+                <el-table-column label="Quantity" prop="quantity" width="100"></el-table-column>
+                <el-table-column label="Open Quantity" prop="open_quantity" width="110"></el-table-column>
+                <el-table-column label="Status" prop="status" width="120"></el-table-column>
+                <el-table-column label="Operation" width="110">
                   <template slot-scope="scope">
                     <el-button type="danger" plain size="mini" @click="handleCancel(scope.$index, scope.row)"
                                v-if="scope.row.status==='new'||scope.row.status==='partially_filled'">Cancel</el-button>
@@ -92,7 +96,7 @@
 import Header from '@/components/Header'
 import NavMenu from '@/components/NavMenu'
 import Footer from '@/components/Footer'
-import { requestFuturesCascader, requestOrderList, refreshToken } from '@/common/api'
+import { requestFuturesCascader, requestOrderList, cancelOrder } from '@/common/api'
 
 export default {
   name: 'Order',
@@ -113,7 +117,8 @@ export default {
         {value: 'new', label: 'NEW'},
         {value: 'partially_filled', label: 'PARTIALLY'},
         {value: 'filled', label: 'FILLED'},
-        {value: 'canceled', label: 'CANCELED'}
+        {value: 'canceled', label: 'CANCELED'},
+        {value: 'rejected', label: 'REJECTED'}
       ],
       selectedStatus: '',
       futuresCascader: [],
@@ -171,14 +176,6 @@ export default {
         this.futuresCascader = res.data.data;
       }
     });
-    // this.runWs();
-    /*
-    refreshToken().then((res) => {
-      let token = res.data.data;
-      sessionStorage.setItem('token', token);
-      console.log(sessionStorage.getItem('token'));
-    });
-    */
     /*
     this.listLoading = true;
     let initRequestParams = {
@@ -197,7 +194,7 @@ export default {
     doFilter () {
       /*
       let filterParams = {
-        'futuresID': this.selectedFutures,
+        'futuresID': this.selectedFutures[1],
         'status': this.selectedStatus
       };
       this.listLoading = true;
@@ -208,55 +205,33 @@ export default {
         this.listLoading = false;
       });
       */
-      // let content = 'orders,' + this.selectedFutures + ',' + this.selectedStatus;
-      // this.sendMessage(content);
     },
     handleCancel (index, row) {
       this.$confirm('Are you sure to cancel?', 'cancel', {
         type: 'warning'
       }).then(() => {
-        this.orderForm = Object.assign({}, row);
-        console.log(this.orderForm);
+        let tmp = Object.assign({}, row);
+        this.orderForm.orderID = tmp.order_id;
+        this.orderForm.futureID = tmp.futures_id;
+        let cancelParams = Object.assign({}, this.orderForm);
+        console.log(cancelParams);
+        cancelOrder(cancelParams).then((res) => {
+          if (res.status === 200 && res.data.status === 200) {
+            this.$message({
+              message: 'Submit request success!',
+              type: 'success'
+            });
+          } else {
+            this.$message.error('Submit request fail');
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
       });
     },
     handleChange (value) {
-      console.log(this.selectedFutures);
+      console.log(this.selectedFutures[1]);
       console.log(this.selectedStatus);
-    },
-    initWs () {
-      if ('WebSocket' in window) {
-        this.ws = new WebSocket('ws://localhost:8888/websocket')
-      } else {
-        this.$message.error('Sorry, websocket not supported by your browser.')
-      }
-      this.ws.onmessage = this.onMessage;
-      this.ws.onclose = this.onClose;
-    },
-    onMessage (e) {
-      let response = JSON.parse(e.data);
-      console.log(response);
-      let content = 'orders,' + this.selectedFutures + ',' + this.selectedStatus;
-      this.sendMessage(content);
-    },
-    sendMessage (msg) {
-      this.ws.send(msg)
-    },
-    closeSocket () {
-      this.ws.close()
-    },
-    onClose () {
-      console.log('ws closed')
-    },
-    runWs () {
-      let content = 'orders,' + this.selectedFutures + ',' + this.selectedStatus;
-      if (this.ws.readyState === this.ws.OPEN) {
-        this.sendMessage(content)
-      } else if (this.ws.readyState === this.ws.CONNECTING) {
-        let _self_ = this;
-        setTimeout(function () {
-          _self_.sendMessage(content)
-        }, 300)
-      }
     }
   }
 }

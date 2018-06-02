@@ -24,9 +24,6 @@
               <el-cascader :options="futuresCascader" v-model="selectedFutures"
                            size="small" placeholder="Select futures" :show-all-levels="false"
                            @change="handleChange" style="float: left; padding-left: 10px"></el-cascader>
-              <el-select v-model="selectedScope" placeholder="Select scope" size="small" style="float: left; padding-left: 20px">
-                <el-option v-for="item in scopeList" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
               <el-button type="primary" plain size="small" @click="doFilter"
                          style="width: 80px; float: left; margin-left: 40px"><i class="el-icon-search"></i>  Filter</el-button>
             </div>
@@ -65,7 +62,7 @@
 import Header from '@/components/Header'
 import NavMenu from '@/components/NavMenu'
 import Footer from '@/components/Footer'
-import { requestTradeList } from '@/common/api'
+import { requestTradeList, requestFuturesCascader } from '@/common/api'
 
 export default {
   name: 'Trade',
@@ -83,11 +80,6 @@ export default {
   },
   data () {
     return {
-      scopeList: [
-        {value: 'all', label: 'ALL'},
-        {value: 'self_only', label: 'SELF ONLY'}
-      ],
-      selectedScope: '',
       futuresCascader: [],
       selectedFutures: '',
       listLoading: false,
@@ -150,6 +142,12 @@ export default {
     }
   },
   mounted () {
+    let cascaderParams = {};
+    requestFuturesCascader(cascaderParams).then((res) => {
+      if (res.status === 200 && res.data.status === 200) {
+        this.futuresCascader = res.data.data;
+      }
+    });
     /*
     this.listLoading = true;
     let initParams = {
@@ -168,8 +166,7 @@ export default {
     doFilter () {
       /*
       let filterParams = {
-        'futuresID': this.selectedFutures,
-        'selfOnly': this.selectedScope
+        'futuresID': this.selectedFutures
       };
       this.listLoading = true;
       requestTradeList(filterParams).then((res) => {
@@ -179,6 +176,9 @@ export default {
         this.listLoading = false;
       });
       */
+    },
+    handleChange (value) {
+      console.log(this.selectedFutures[1]);
     }
   }
 }
