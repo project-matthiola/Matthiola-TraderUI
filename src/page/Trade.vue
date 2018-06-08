@@ -38,16 +38,21 @@
                 <el-table-column label="Trade Time" prop="trade_time" width="100" header-align="center" show-overflow-tooltip></el-table-column>
                 <el-table-column label="Initiator" header-align="center">
                   <el-table-column label="Trader" prop="initiator.trader" width="100" header-align="center"></el-table-column>
-                  <el-table-column label="Firm" prop="initiator.firm" width="100" header-align="center"></el-table-column>
+                  <el-table-column label="Firm" prop="initiator.firm" width="120" header-align="center"></el-table-column>
                   <el-table-column label="Side" prop="initiator.side" width="100" header-align="center"></el-table-column>
                 </el-table-column>
                 <el-table-column label="Completion" header-align="center">
                   <el-table-column label="Trader" prop="completion.trader" width="100" header-align="center"></el-table-column>
-                  <el-table-column label="Firm" prop="completion.firm" width="100" header-align="center"></el-table-column>
+                  <el-table-column label="Firm" prop="completion.firm" width="120" header-align="center"></el-table-column>
                   <el-table-column label="Side" prop="completion.side" width="100" header-align="center"></el-table-column>
                 </el-table-column>
               </el-table>
             </div>
+            <template>
+              <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage"
+                             layout="prev, pager, next" :total="100">
+              </el-pagination>
+            </template>
           </el-main>
         </el-container>
       </el-container>
@@ -80,6 +85,7 @@ export default {
   },
   data () {
     return {
+      currentPage: 1,
       futuresCascader: [],
       selectedFutures: '',
       listLoading: false,
@@ -148,11 +154,10 @@ export default {
         this.futuresCascader = res.data.data;
       }
     });
-    /*
     this.listLoading = true;
     let initParams = {
-      'futuresID': '',
-      'selfOnly': ''
+      'futuresID': 'null',
+      'page': '1'
     };
     requestTradeList(initParams).then((res) => {
       if (res.status === 200 && res.data.status === 200) {
@@ -160,13 +165,12 @@ export default {
       }
       this.listLoading = false;
     });
-    */
   },
   methods: {
     doFilter () {
-      /*
       let filterParams = {
-        'futuresID': this.selectedFutures
+        'futuresID': this.selectedFutures,
+        'page': '1'
       };
       this.listLoading = true;
       requestTradeList(filterParams).then((res) => {
@@ -175,10 +179,23 @@ export default {
         }
         this.listLoading = false;
       });
-      */
     },
     handleChange (value) {
       console.log(this.selectedFutures[1]);
+    },
+    handleCurrentChange (val) {
+      this.currentPage = val;
+      let params = {
+        'futuresID': this.selectedFutures,
+        'page': '1'
+      };
+      this.listLoading = true;
+      requestTradeList(params).then((res) => {
+        if (res.status === 200 && res.data.status === 200) {
+          this.tradeHistory = res.data.data;
+        }
+        this.listLoading = false;
+      });
     }
   }
 }

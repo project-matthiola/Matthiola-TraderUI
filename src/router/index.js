@@ -2,8 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/page/Login'
 import Register from '@/page/Register'
-import HelloWorld from '@/components/HelloWorld'
-import TestWebSocket from '@/page/TestWebSocket'
 import Market from '@/page/Market'
 import Catalog from '@/page/Catalog'
 import Order from '@/page/Order'
@@ -27,19 +25,6 @@ let routes = [
       index: 0
     },
     component: Register
-  },
-  {
-    path: '/hello',
-    name: 'hello',
-    meta: {
-      requireAuth: true
-    },
-    component: HelloWorld
-  },
-  {
-    path: '/testWs',
-    name: 'testWs',
-    component: TestWebSocket
   },
   {
     path: '/market',

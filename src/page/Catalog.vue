@@ -53,7 +53,7 @@
 import Header from '@/components/Header'
 import NavMenu from '@/components/NavMenu'
 import Footer from '@/components/Footer'
-import { requestFuturesList, refreshToken } from '@/common/api'
+import { requestFuturesList } from '@/common/api'
 export default {
   name: 'Catalog',
   components: {
@@ -75,13 +75,6 @@ export default {
         // console.log(this.futures);
       }
     });
-    /*
-    refreshToken().then((res) => {
-      let token = res.data.data;
-      sessionStorage.setItem('token', token);
-      console.log(sessionStorage.getItem('token'));
-    });
-    */
   },
   computed: {
     changeMainClass () {

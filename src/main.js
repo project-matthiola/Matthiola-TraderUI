@@ -11,7 +11,6 @@ import axios from 'axios'
 import store from './store'
 import './style/common.less'
 import Common from './common/common'
-import { refreshToken, isTokenAboutToExpired } from './common/api'
 
 Vue.config.productionTip = false
 
@@ -107,7 +106,6 @@ axios.interceptors.response.use(
     return Promise.reject(error.response.data);
   }
 );
-
 
 /* eslint-disable no-new */
 new Vue({

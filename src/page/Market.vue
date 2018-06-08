@@ -38,7 +38,7 @@
                 <el-button type="text" size="mini" v-bind:style="{color: btnTHColor, marginLeft: 0 }" @click="activeTradeHistory"><u>TradeHistory</u></el-button>
               </div>
               <div v-show="activeOB">
-                <el-table :data="sells" size="mini" highlight-current-row :default-sort = "{prop: 'price', order: 'descending'}" max-height="200"
+                <el-table :data="sells" size="mini" highlight-current-row :default-sort = "{prop: '0', order: 'descending'}" max-height="200"
                           id="sellsTable" tooltip-effect="light" v-loading="sellsLoading" element-loading-spinner="el-icon-loading">
                   <el-table-column prop="0" label="PRICE" sortable width="120" show-overflow-tooltip>
                   </el-table-column>
@@ -115,7 +115,7 @@
 import Header from '@/components/Header'
 import NavMenu from '@/components/NavMenu'
 import Footer from '@/components/Footer'
-import { sendOrder, refreshToken, requestBrokers } from '@/common/api'
+import { sendOrder, requestBrokers } from '@/common/api'
 /* eslint-disable */
 export default {
   name: 'Market',
@@ -239,13 +239,6 @@ export default {
         this.brokers = res.data.data;
       }
     })
-    /*
-    refreshToken().then((res) => {
-      let token = res.data.data;
-      sessionStorage.setItem('token', token);
-      console.log(sessionStorage.getItem('token'));
-    });
-    */
   },
   beforeDestroy () {
     this.closeSocket()
@@ -413,12 +406,13 @@ export default {
         this.sells = response.data.asks;
         this.buys = response.data.bids;
         this.sellsLoading = false;
-        let content = 'orderBook,futures1,' + this.activeBroker;
+        let content = 'orderBook,' + this.futureID + ',' + this.activeBroker;
         this.sendMessage(content);
       } else if (response.type === 'trade') {
         this.tradesLoading = true;
         this.trades = response.data;
-        let content2 = 'trade,futures1,' + this.activeBroker;
+        //let content2 = 'trade,futures1,' + this.activeBroker;
+        let content2 = 'trade,' + this.futureID + ',' + this.activeBroker;
         this.tradesLoading = false;
         this.sendMessage(content2);
       }
@@ -442,8 +436,10 @@ export default {
     },
     runWs () {
       // let content = 'orderBook,' + this.futureID + ',' + this.activeBroker;
-      let content = 'orderBook,futures1,' + this.activeBroker;
-      let content2 = 'trade,futures1,' + this.activeBroker;
+      //let content = 'orderBook,futures1,' + this.activeBroker;
+      //let content2 = 'trade,futures1,' + this.activeBroker;
+      let content = 'orderBook,' + this.futureID + ',' + this.activeBroker;
+      let content2 = 'trade,' + this.futureID + ',' + this.activeBroker;
       if (this.ws.readyState === this.ws.OPEN) {
         this.sendMessage(content);
         this.sendMessage(content2);

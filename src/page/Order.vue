@@ -82,6 +82,11 @@
                 </el-table-column>
               </el-table>
             </template>
+            <template>
+              <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage"
+                             layout="prev, pager, next" :total="100">
+              </el-pagination>
+            </template>
           </el-main>
         </el-container>
       </el-container>
@@ -106,21 +111,22 @@ export default {
   created () {
     document.title = 'My Order';
     this.$store.state.isCollapse = true
-    // this.initWs();
   },
   data () {
     return {
       ws: null,
       listLoading: false,
+      currentPage: 1,
       statusList: [
-        {value: 'all', label: 'ALL'},
-        {value: 'new', label: 'NEW'},
-        {value: 'partially_filled', label: 'PARTIALLY'},
-        {value: 'filled', label: 'FILLED'},
-        {value: 'canceled', label: 'CANCELED'},
-        {value: 'rejected', label: 'REJECTED'}
+        {value: '-1', label: 'ALL'},
+        {value: 'A', label: 'PENDING'},
+        {value: '0', label: 'NEW'},
+        {value: '1', label: 'PARTIALLY'},
+        {value: '2', label: 'FILLED'},
+        {value: '3', label: 'CANCELED'},
+        {value: '8', label: 'REJECTED'}
       ],
-      selectedStatus: '',
+      selectedStatus: '-1',
       futuresCascader: [],
       selectedFutures: [],
       myOrders: [
@@ -176,11 +182,11 @@ export default {
         this.futuresCascader = res.data.data;
       }
     });
-    /*
     this.listLoading = true;
     let initRequestParams = {
-      'futuresID': '',
-      'status': ''
+      'futuresID': 'null',
+      'status': '-1',
+      'page': '1'
     };
     requestOrderList(initRequestParams).then((res) => {
       if (res.status === 200 && res.data.status === 200) {
@@ -188,14 +194,13 @@ export default {
         this.listLoading = false;
       }
     });
-    */
   },
   methods: {
     doFilter () {
-      /*
       let filterParams = {
         'futuresID': this.selectedFutures[1],
-        'status': this.selectedStatus
+        'status': this.selectedStatus,
+        'page': '1'
       };
       this.listLoading = true;
       requestOrderList(filterParams).then((res) => {
@@ -204,7 +209,6 @@ export default {
         }
         this.listLoading = false;
       });
-      */
     },
     handleCancel (index, row) {
       this.$confirm('Are you sure to cancel?', 'cancel', {
@@ -232,6 +236,22 @@ export default {
     handleChange (value) {
       console.log(this.selectedFutures[1]);
       console.log(this.selectedStatus);
+    },
+    handleCurrentChange (val) {
+      console.log(val);
+      this.currentPage = val;
+      let params = {
+        'futuresID': this.selectedFutures[1],
+        'status': this.selectedStatus,
+        'page': this.currentPage
+      };
+      this.listLoading = true;
+      requestOrderList(params).then((res) => {
+        if (res.status === 200 && res.data.status === 200) {
+          this.myOrders = res.data.data;
+        }
+        this.listLoading = false;
+      });
     }
   }
 }

@@ -40,11 +40,11 @@ export const requestFuturesCascader = params => {
   return axios.get(`${futureUrl}/getFuturesCascader`, {params: params})
 };
 export const requestOrderList = params => {
-  return axios.get(`${orderUrl}/getOrders`, params)
+  return axios.get(`${orderUrl}/getOrders`, {params: params})
 };
 export const requestBrokers = () => {
   return axios.get(`${brokerUrl}/getAllBrokers`, {params: {}})
 };
 export const requestTradeList = params => {
-  return axios.get(`${tradeUrl}/getTrades`, params)
+  return axios.get(`${tradeUrl}/getTrades`, {params: params})
 };
