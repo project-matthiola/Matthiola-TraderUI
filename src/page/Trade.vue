@@ -50,7 +50,7 @@
             </div>
             <template>
               <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage"
-                             layout="prev, pager, next" :total="100">
+                             layout="prev, pager, next" :total="totalNum">
               </el-pagination>
             </template>
           </el-main>
@@ -86,8 +86,9 @@ export default {
   data () {
     return {
       currentPage: 1,
+      totalNum: 100,
       futuresCascader: [],
-      selectedFutures: '',
+      selectedFutures: ['null', 'null'],
       listLoading: false,
       tradeHistory: [
         {
@@ -161,7 +162,9 @@ export default {
     };
     requestTradeList(initParams).then((res) => {
       if (res.status === 200 && res.data.status === 200) {
+        console.log(res);
         this.tradeHistory = res.data.data;
+        this.totalNum = parseInt(res.data.message);
       }
       this.listLoading = false;
     });
@@ -169,30 +172,32 @@ export default {
   methods: {
     doFilter () {
       let filterParams = {
-        'futuresID': this.selectedFutures,
+        'futuresID': this.selectedFutures[1],
         'page': '1'
       };
       this.listLoading = true;
       requestTradeList(filterParams).then((res) => {
         if (res.status === 200 && res.data.status === 200) {
           this.tradeHistory = res.data.data;
+          this.totalNum = parseInt(res.data.message);
         }
         this.listLoading = false;
       });
     },
     handleChange (value) {
-      console.log(this.selectedFutures[1]);
+      console.log(this.selectedFutures);
     },
     handleCurrentChange (val) {
       this.currentPage = val;
       let params = {
-        'futuresID': this.selectedFutures,
-        'page': '1'
+        'futuresID': this.selectedFutures[1],
+        'page': this.currentPage
       };
       this.listLoading = true;
       requestTradeList(params).then((res) => {
         if (res.status === 200 && res.data.status === 200) {
           this.tradeHistory = res.data.data;
+          this.totalNum = parseInt(res.data.message);
         }
         this.listLoading = false;
       });

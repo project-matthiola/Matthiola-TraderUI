@@ -84,7 +84,7 @@
             </template>
             <template>
               <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage"
-                             layout="prev, pager, next" :total="100">
+                             layout="prev, pager, next" :total="totalNum">
               </el-pagination>
             </template>
           </el-main>
@@ -117,6 +117,7 @@ export default {
       ws: null,
       listLoading: false,
       currentPage: 1,
+      totalNum: 100,
       statusList: [
         {value: '-1', label: 'ALL'},
         {value: 'A', label: 'PENDING'},
@@ -128,7 +129,7 @@ export default {
       ],
       selectedStatus: '-1',
       futuresCascader: [],
-      selectedFutures: [],
+      selectedFutures: ['null', 'null'],
       myOrders: [
         { order_id: 'D4CA73A0-FE34-4B09-991F-E889813B1C15',
           order_type: 'limit',
@@ -191,6 +192,7 @@ export default {
     requestOrderList(initRequestParams).then((res) => {
       if (res.status === 200 && res.data.status === 200) {
         this.myOrders = res.data.data;
+        this.totalNum = parseInt(res.data.message);
         this.listLoading = false;
       }
     });
@@ -206,6 +208,7 @@ export default {
       requestOrderList(filterParams).then((res) => {
         if (res.status === 200 && res.data.status === 200) {
           this.myOrders = res.data.data;
+          this.totalNum = parseInt(res.data.message);
         }
         this.listLoading = false;
       });
@@ -249,6 +252,7 @@ export default {
       requestOrderList(params).then((res) => {
         if (res.status === 200 && res.data.status === 200) {
           this.myOrders = res.data.data;
+          this.totalNum = parseInt(res.data.message);
         }
         this.listLoading = false;
       });
