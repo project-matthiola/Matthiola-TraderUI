@@ -6,6 +6,10 @@
 
 The UI for the Trader of *Distributed Commodities OTC Electronic Trading System*, instructed by *Morgan Stanley* and *SJTU SE*.
 
+## Architecture
+
+![architecture](https://raw.githubusercontent.com/ljw9609/markdown-pictures/master/uiarchitecture.png?token=ATNvWx9FXD7zHU5ju_fA2tiw5ncEap-Tks5bJHwRwA%3D%3D)
+
 ## Build Setup
 
 ``` bash

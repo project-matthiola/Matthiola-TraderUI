@@ -49,11 +49,14 @@
                       <el-form-item label="Quantity">
                         <span>{{ props.row.quantity }}</span>
                       </el-form-item>
-                      <el-form-item label="Open Quantity" v-if="props.row.order_type!=='market'">
+                      <el-form-item label="Open Quantity">
                         <span>{{ props.row.open_quantity }}</span>
                       </el-form-item>
                       <el-form-item label="Price">
                         <span>{{ props.row.price }}</span>
+                      </el-form-item>
+                      <el-form-item label="Stop Price">
+                        <span>{{ props.row.stop_price }}</span>
                       </el-form-item>
                       <el-form-item label="Status">
                         <span>{{ props.row.status }}</span>
@@ -77,7 +80,7 @@
                 <el-table-column label="Operation" width="110">
                   <template slot-scope="scope">
                     <el-button type="danger" plain size="mini" @click="handleCancel(scope.$index, scope.row)"
-                               v-if="scope.row.status==='new'||scope.row.status==='partially_filled'">Cancel</el-button>
+                               v-if="scope.row.status==='pending'||scope.row.status==='new'||scope.row.status==='partially_filled'">Cancel</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -114,7 +117,6 @@ export default {
   },
   data () {
     return {
-      ws: null,
       listLoading: false,
       currentPage: 1,
       totalNum: 100,
@@ -139,6 +141,7 @@ export default {
           quantity: 50,
           open_quantity: 40,
           price: 30.12,
+          stop_price: 30,
           status: 'new',
           created_at: '2018-05-17T12:00:00Z',
           updated_at: '2012-05-17T13:00:00Z'
@@ -151,6 +154,7 @@ export default {
           quantity: 50,
           open_quantity: 40,
           price: 30.12,
+          stop_price: 30,
           status: 'canceled',
           created_at: '2018-05-17T12:00:00Z',
           updated_at: '2012-05-17T13:00:00Z'
@@ -163,7 +167,21 @@ export default {
           quantity: 50,
           open_quantity: 40,
           price: 30.12,
+          stop_price: 30,
           status: 'partially_filled',
+          created_at: '2018-05-17T12:00:00Z',
+          updated_at: '2012-05-17T13:00:00Z'
+        },
+        { order_id: 'D4CA73A0-FE34-4B09-991F-E889813B1C15',
+          order_type: 'stop',
+          side: 'buy',
+          futures_id: 'GC_SEP18',
+          trader_name: 'John',
+          quantity: 50,
+          open_quantity: 40,
+          price: 30.12,
+          stop_price: 30,
+          status: 'pending',
           created_at: '2018-05-17T12:00:00Z',
           updated_at: '2012-05-17T13:00:00Z'
         }
@@ -183,6 +201,7 @@ export default {
         this.futuresCascader = res.data.data;
       }
     });
+    /*
     this.listLoading = true;
     let initRequestParams = {
       'futuresID': 'null',
@@ -196,6 +215,7 @@ export default {
         this.listLoading = false;
       }
     });
+    */
   },
   methods: {
     doFilter () {
