@@ -28,14 +28,14 @@
                          style="width: 80px; float: left; margin-left: 40px"><i class="el-icon-search"></i>  Filter</el-button>
             </div>
             <div style="padding-top: 50px">
-              <el-table :data="tradeHistory" style="width: 100%; text-align: left" stripe tooltip-effect="light"
+              <el-table :data="tradeHistory" style="width: 100%; text-align: left" stripe tooltip-effect="light" :default-sort="{prop:'trade_time', order:'descending'}"
                         highlight-current-row height="450px" size="small" v-loading="listLoading">
                 <el-table-column label="Trade ID" prop="trade_id" fixed width="200" header-align="center" show-overflow-tooltip></el-table-column>
                 <el-table-column label="Broker" prop="broker" width="100" header-align="center" show-overflow-tooltip></el-table-column>
                 <el-table-column label="Futures" prop="futures_id" width="100" header-align="center"></el-table-column>
                 <el-table-column label="Price" prop="price" width="100" header-align="center"></el-table-column>
                 <el-table-column label="Quantity" prop="quantity" width="100" header-align="center"></el-table-column>
-                <el-table-column label="Trade Time" prop="trade_time" width="100" header-align="center" show-overflow-tooltip></el-table-column>
+                <el-table-column label="Trade Time" prop="trade_time" width="100" sortable header-align="center" show-overflow-tooltip></el-table-column>
                 <el-table-column label="Initiator" header-align="center">
                   <el-table-column label="Trader" prop="initiator.trader" width="100" header-align="center"></el-table-column>
                   <el-table-column label="Firm" prop="initiator.firm" width="120" header-align="center"></el-table-column>

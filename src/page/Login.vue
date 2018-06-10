@@ -79,7 +79,7 @@ export default {
                 let redirect = this.$route.query.redirect;
                 this.$router.push(redirect);
               } else {
-                this.$router.push('/');
+                this.$router.push('/catalog');
               }
             }
           }).catch((err) => {

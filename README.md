@@ -4,7 +4,7 @@
 ![npm](https://img.shields.io/badge/npm-v5.6.0-blue.svg)
 ![license](https://img.shields.io/badge/license-GPL-yellow.svg)
 
-The UI for the Trader of *Distributed Commodities OTC Electronic Trading System*, instructed by *Morgan Stanley* and *SJTU SE*.
+The Trader UI of project **Matthiola**, a *Distributed Commodities OTC Electronic Trading System*, instructed by *Morgan Stanley* and *SJTU SE*.
 
 ## Architecture
 
@@ -38,5 +38,5 @@ npm test
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
 
-# License
-GPL
+## License
+[GPL](https://github.com/ljw9609/Matthiola-TraderUI/blob/master/LICENSE)

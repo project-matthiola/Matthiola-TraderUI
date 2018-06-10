@@ -32,8 +32,8 @@
                          style="width: 80px; float: left; margin-left: 40px"><i class="el-icon-search"></i>  Filter</el-button>
             </div>
             <template>
-              <el-table :data="myOrders" style="width: 100%; text-align: left" stripe
-                        highlight-current-row height="450px" size="small" v-loadin="listLoading">
+              <el-table :data="myOrders" style="width: 100%; text-align: left" stripe :default-sort="{prop: 'updated_at', order: 'descending'}"
+                        highlight-current-row height="450px" tooltip-effect="light" size="small" v-loadin="listLoading">
                 <el-table-column type="expand">
                   <template slot-scope="props">
                     <el-form label-position="left" inline class="demo-table-expand" size="small">
@@ -70,12 +70,13 @@
                     </el-form>
                   </template>
                 </el-table-column>
-                <el-table-column label="Order ID" prop="order_id" width="350"></el-table-column>
+                <el-table-column label="Order ID" prop="order_id" width="320"></el-table-column>
                 <el-table-column label="Futures" prop="futures_id" width="120"></el-table-column>
                 <el-table-column label="Order Type" prop="order_type" width="120"></el-table-column>
                 <el-table-column label="Side" prop="side" width="100"></el-table-column>
-                <el-table-column label="Quantity" prop="quantity" width="100"></el-table-column>
+                <!--<el-table-column label="Quantity" prop="quantity" width="100"></el-table-column>-->
                 <el-table-column label="Open Quantity" prop="open_quantity" width="110"></el-table-column>
+                <el-table-column label="Updated Time" prop="updated_at" width="130" show-overflow-tooltip sortable></el-table-column>
                 <el-table-column label="Status" prop="status" width="120"></el-table-column>
                 <el-table-column label="Operation" width="110">
                   <template slot-scope="scope">
@@ -201,7 +202,6 @@ export default {
         this.futuresCascader = res.data.data;
       }
     });
-    /*
     this.listLoading = true;
     let initRequestParams = {
       'futuresID': 'null',
@@ -215,7 +215,6 @@ export default {
         this.listLoading = false;
       }
     });
-    */
   },
   methods: {
     doFilter () {
