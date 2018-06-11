@@ -35,14 +35,14 @@
                 <el-table-column label="Futures" prop="futures_id" width="100" header-align="center"></el-table-column>
                 <el-table-column label="Price" prop="price" width="100" header-align="center"></el-table-column>
                 <el-table-column label="Quantity" prop="quantity" width="100" header-align="center"></el-table-column>
-                <el-table-column label="Trade Time" prop="trade_time" width="100" sortable header-align="center" show-overflow-tooltip></el-table-column>
+                <el-table-column label="Trade Time" prop="trade_time" width="120" sortable header-align="center" show-overflow-tooltip></el-table-column>
                 <el-table-column label="Initiator" header-align="center">
-                  <el-table-column label="Trader" prop="initiator.trader" width="100" header-align="center"></el-table-column>
+                  <el-table-column label="Trader" prop="initiator.trader" width="100" header-align="center" show-overflow-tooltip></el-table-column>
                   <el-table-column label="Firm" prop="initiator.firm" width="120" header-align="center"></el-table-column>
                   <el-table-column label="Side" prop="initiator.side" width="100" header-align="center"></el-table-column>
                 </el-table-column>
                 <el-table-column label="Completion" header-align="center">
-                  <el-table-column label="Trader" prop="completion.trader" width="100" header-align="center"></el-table-column>
+                  <el-table-column label="Trader" prop="completion.trader" width="100" header-align="center" show-overflow-tooltip></el-table-column>
                   <el-table-column label="Firm" prop="completion.firm" width="120" header-align="center"></el-table-column>
                   <el-table-column label="Side" prop="completion.side" width="100" header-align="center"></el-table-column>
                 </el-table-column>

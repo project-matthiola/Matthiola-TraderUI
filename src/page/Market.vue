@@ -56,9 +56,9 @@
               <div v-show="activeTH">
                 <el-table :data="trades" size="mini" highlight-current-row max-height="400"
                           id="tradesTable" tooltip-effect="light" v-loading="tradesLoading" element-loading-spinner="el-icon-loading">
-                  <el-table-column prop="0" label="PRICE" width="90" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="1" label="AMOUNT" width="90" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="2" label="TIME" width="120" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="0" label="PRICE" width="80" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="1" label="AMOUNT" width="80" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="2" label="TIME" width="140" show-overflow-tooltip></el-table-column>
                 </el-table>
               </div>
             </el-card>
@@ -476,10 +476,10 @@ export default {
               let stopPrice = orderParams.price;
               let limitPrice = orderParams.price2;
               if (limitPrice === 0.0 || limitPrice === '') {
-                orderParams.type = '4';
+                orderParams.type = '3';
                 limitPrice = 0.0;
               } else {
-                orderParams.type = '3';
+                orderParams.type = '4';
               }
               orderParams.price = limitPrice;
               orderParams.price2 = stopPrice;

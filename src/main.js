@@ -100,7 +100,7 @@ axios.interceptors.response.use(
           router.replace({
             path: '/login',
             query: { redirect: router.currentRoute.fullPath }
-          })
+          });
       }
     }
     return Promise.reject(error.response.data);

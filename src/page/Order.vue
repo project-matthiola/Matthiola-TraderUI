@@ -67,21 +67,24 @@
                       <el-form-item label="Updated At">
                         <span>{{ props.row.updated_at }}</span>
                       </el-form-item>
+                      <el-form-item label="Broker">
+                        <span>{{ props.row.brokerName }}</span>
+                      </el-form-item>
                     </el-form>
                   </template>
                 </el-table-column>
-                <el-table-column label="Order ID" prop="order_id" width="320"></el-table-column>
+                <el-table-column label="Order ID" prop="order_id" width="310"></el-table-column>
                 <el-table-column label="Futures" prop="futures_id" width="120"></el-table-column>
                 <el-table-column label="Order Type" prop="order_type" width="120"></el-table-column>
                 <el-table-column label="Side" prop="side" width="100"></el-table-column>
                 <!--<el-table-column label="Quantity" prop="quantity" width="100"></el-table-column>-->
                 <el-table-column label="Open Quantity" prop="open_quantity" width="110"></el-table-column>
                 <el-table-column label="Updated Time" prop="updated_at" width="130" show-overflow-tooltip sortable></el-table-column>
-                <el-table-column label="Status" prop="status" width="120"></el-table-column>
+                <el-table-column label="Status" prop="status" width="130"></el-table-column>
                 <el-table-column label="Operation" width="110">
                   <template slot-scope="scope">
                     <el-button type="danger" plain size="mini" @click="handleCancel(scope.$index, scope.row)"
-                               v-if="scope.row.status==='pending'||scope.row.status==='new'||scope.row.status==='partially_filled'">Cancel</el-button>
+                               v-if="scope.row.status==='PENDING_NEW'||scope.row.status==='NEW'||scope.row.status==='PARTIALLY_FILLED'">Cancel</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -127,7 +130,7 @@ export default {
         {value: '0', label: 'NEW'},
         {value: '1', label: 'PARTIALLY'},
         {value: '2', label: 'FILLED'},
-        {value: '3', label: 'CANCELED'},
+        {value: '4', label: 'CANCELED'},
         {value: '8', label: 'REJECTED'}
       ],
       selectedStatus: '-1',
@@ -239,6 +242,7 @@ export default {
         let tmp = Object.assign({}, row);
         this.orderForm.orderID = tmp.order_id;
         this.orderForm.futureID = tmp.futures_id;
+        this.orderForm.brokerName = tmp.brokerName;
         let cancelParams = Object.assign({}, this.orderForm);
         console.log(cancelParams);
         cancelOrder(cancelParams).then((res) => {
@@ -246,6 +250,19 @@ export default {
             this.$message({
               message: 'Submit request success!',
               type: 'success'
+            });
+            let params = {
+              'futuresID': this.selectedFutures[1],
+              'status': this.selectedStatus,
+              'page': this.currentPage
+            };
+            this.listLoading = true;
+            requestOrderList(params).then((res) => {
+              if (res.status === 200 && res.data.status === 200) {
+                this.myOrders = res.data.data;
+                this.totalNum = parseInt(res.data.message);
+              }
+              this.listLoading = false;
             });
           } else {
             this.$message.error('Submit request fail');

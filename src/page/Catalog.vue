@@ -24,7 +24,8 @@
               <el-row style="padding-top: 20px">
                 <el-col :span="5" v-for="(future, index) in futures" :key="future.futureName" :offset="1" style="padding-top: 20px">
                   <el-card :body-style="{ padding: '0px' }">
-                    <img src="../assets/icon.jpg" class="image">
+                    <!--<img src="../assets/icon.jpg" class="image">-->
+                    <img :src="future.icon" class="image">
                     <div style="padding: 14px;">
                       <span>{{future.futureName}}</span>
                       <div class="bottom clearfix">

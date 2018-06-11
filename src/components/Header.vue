@@ -12,11 +12,8 @@
           <el-menu-item index="3">Service Center</el-menu-item>
         </el-menu>
       </el-col>
-      <el-col :span="1" style="height: 60px">
-        <img src="@/assets/icon.jpg" style="width: 90%; height: 80%; padding-top: 10px" />
-      </el-col>
-      <el-col :span="4" style="font-size: larger; text-align: left; height: 60px">
-        <p>Matthiola-Trader</p>
+      <el-col :span="5" style="height: 60px">
+        <img src="@/assets/logo.png" style="height: 60px; padding-top: 10px" />
       </el-col>
     </el-col>
   </el-row>
